@@ -1,3 +1,0 @@
-/Users/leticiacoelho/Desktop/2 Semestre/DA/DA-Project2/cmake-build-debug/CMakeFiles/DA_Project2.dir
-/Users/leticiacoelho/Desktop/2 Semestre/DA/DA-Project2/cmake-build-debug/CMakeFiles/edit_cache.dir
-/Users/leticiacoelho/Desktop/2 Semestre/DA/DA-Project2/cmake-build-debug/CMakeFiles/rebuild_cache.dir
