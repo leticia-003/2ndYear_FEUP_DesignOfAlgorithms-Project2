@@ -5,5 +5,6 @@
 
 void displayMenu();
 std::string getDatasetChoice();
+void displayToyGraphs();
 
 #endif // MENU_H

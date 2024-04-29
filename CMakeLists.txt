@@ -5,4 +5,8 @@ set(CMAKE_CXX_STANDARD 14)
 
 add_executable(DA_Project2
         main.cpp
-        Menu.cpp)
+        Menu.cpp
+        Graphs.h
+        Graphs.cpp
+        VertexEdge.h
+        VertexEdge.cpp)
