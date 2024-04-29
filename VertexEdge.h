@@ -20,7 +20,7 @@ class Edge;
 class Vertex {
 public:
 
-    explicit Vertex(int id);
+    Vertex(int id);
 
     std::vector<Edge *> getAdj() const;
 

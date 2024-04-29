@@ -6,7 +6,8 @@
 
 /********************** Vertex *****************************/
 
-Vertex::Vertex(int id) {}
+Vertex::Vertex(int id) : id(id) {}
+
 
 int Vertex::getId() const {
     return this->id;
