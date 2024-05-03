@@ -23,6 +23,16 @@ Edge * Vertex::addEdge(Vertex* dest, double distance) {
     return edge;
 }
 
+// Get an edge given the destination vertex's ID
+Edge* Vertex::getEdge(int destId) {
+    for (Edge* edge : adj) {
+        if (edge->getDest()->getId() == destId) {
+            return edge;
+        }
+    }
+    return nullptr; // Edge not found
+}
+
 
 /************************** Edge ***************************/
 
@@ -30,4 +40,8 @@ Edge::Edge(Vertex* orig, Vertex* dest, double distance) : orig(orig), dest(dest)
 
 Vertex * Edge::getDest() const {
     return this->dest;
+}
+
+double Edge::getDistance() const {
+    return distance;
 }

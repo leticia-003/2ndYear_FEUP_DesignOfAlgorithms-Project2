@@ -9,4 +9,6 @@ add_executable(DA_Project2
         Graphs.h
         Graphs.cpp
         VertexEdge.h
-        VertexEdge.cpp)
+        VertexEdge.cpp
+        Algorithms.h
+        Algorithms.cpp)

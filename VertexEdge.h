@@ -28,6 +28,8 @@ public:
 
     int getId() const;
 
+    Edge* getEdge(int destId);
+
 protected:
     int id;
 
@@ -47,6 +49,8 @@ public:
     Edge(Vertex* orig, Vertex* dest, double distance);
 
     Vertex *getDest() const;
+
+    double getDistance() const;
 
 protected:
 

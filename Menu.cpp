@@ -1,5 +1,6 @@
 #include "Menu.h"
 #include "Graphs.h"
+#include "Algorithms.h"
 #include <iostream>
 #include <filesystem>
 
@@ -43,6 +44,7 @@ std::string getDatasetChoice() {
     }
 
     if (dataset == "Toy-Graphs") {
+        Algorithms algorithms;
 
         // List files in the Toy-Graphs directory
         std::vector<std::string> graphFiles;
@@ -71,8 +73,42 @@ std::string getDatasetChoice() {
         } while (graphChoice < 1 || graphChoice > graphFiles.size());
 
         std::vector<std::vector<Vertex*>> toyGraphs = graphHandler.createToyGraphs(graphFiles[graphChoice - 1]);
-        // Let's say you want to print the first toy graph
-        graphHandler.printGraph(toyGraphs[0]); // Passing the first toy graph to printGraph
+
+        std::cout << std::endl;
+        std::cout << "+-------------------------------------+" << std::endl;
+        std::cout << "|          Choose an action           |" << std::endl;
+        std::cout << "+-------------------------------------+" << std::endl;
+        std::cout << "|  1. Print the graph                 |" << std::endl;
+        std::cout << "|  2. TSP Backtracking                |" << std::endl;
+        std::cout << "+-------------------------------------+" << std::endl;
+
+        int actionChoice;
+        std::cout << "Enter your choice (1 or 2): ";
+        std::cin >> actionChoice;
+
+        double minCost = 0.0;
+        double elapsedTime;
+        std::vector<int> bestPath;
+
+        switch (actionChoice) {
+            case 1:
+                // Print the graph
+                graphHandler.printGraph(toyGraphs[0]);
+                break;
+            case 2:
+                minCost = algorithms.tspBacktracking(toyGraphs[0], bestPath, elapsedTime);  // Assuming you want to solve TSP on the first graph in your vector
+                std::cout << "Minimum TSP cost: " << minCost << std::endl;
+
+                std::cout << "Path Taken: ";
+                for (int v : bestPath) {
+                    std::cout << v << " ";
+                }
+                std::cout << std::endl;
+                std::cout << "Time Taken: " << elapsedTime << " seconds" << std::endl;
+                break;
+            default:
+                std::cout << "Invalid choice" << std::endl;
+        }
     }
 
     if (dataset == "Extra Fully Connected Graphs") {
