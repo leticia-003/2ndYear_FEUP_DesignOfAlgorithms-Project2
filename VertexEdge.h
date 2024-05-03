@@ -24,7 +24,7 @@ public:
 
     std::vector<Edge *> getAdj() const;
 
-    Edge * addEdge(Vertex* dest, int distance);
+    Edge * addEdge(Vertex* dest, double distance);
 
     int getId() const;
 

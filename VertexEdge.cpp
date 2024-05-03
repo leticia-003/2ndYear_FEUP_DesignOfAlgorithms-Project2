@@ -17,7 +17,7 @@ std::vector<Edge *> Vertex::getAdj() const {
     return adj;
 }
 
-Edge * Vertex::addEdge(Vertex* dest, int distance) {
+Edge * Vertex::addEdge(Vertex* dest, double distance) {
     Edge* edge = new Edge(this, dest, distance);
     adj.push_back(edge);
     return edge;

@@ -22,12 +22,13 @@ Vertex * Graph::findVertex(const int &id) const {
     }
 }
 
-bool Graph::addVertex(const Vertex& vertex) {
-    if (findVertex(vertex.getId()) != nullptr)
+bool Graph::addVertex(Vertex &vertex) {
+    if (findVertex(vertex.getId()) != nullptr)  // This check might be redundant due to how vertices are added
         return false;
-    vertexMap.insert({vertex.getId(), new Vertex(vertex)});
+    vertexMap.insert({vertex.getId(), &vertex});  // Insert the pointer to the existing vertex
     return true;
 }
+
 
 
 // Function to calculate Haversine distance between two latitude-longitude points
@@ -87,19 +88,19 @@ std::vector<std::vector<Vertex*>> Graph::createToyGraphs(const std::string& grap
         Vertex *sourceVertex = findVertex(source);
         if (!sourceVertex) {
             sourceVertex = new Vertex(source);
-            std::cout << "Creating new source vertex: " << source << std::endl;
+            //std::cout << "Creating new source vertex: " << source << std::endl;
             addVertex(*sourceVertex);
         }
         Vertex *destVertex = findVertex(dest);
         if (!destVertex) {
             destVertex = new Vertex(dest);
-            std::cout << "Creating new destination vertex: " << dest << std::endl;
+            //std::cout << "Creating new destination vertex: " << dest << std::endl;
             addVertex(*destVertex);
         }
 
         // Add the edge
         sourceVertex->addEdge(destVertex, distance);
-        std::cout << "Adding edge from " << source << " to " << dest << " with distance " << distance << std::endl;
+        //std::cout << "Adding edge from " << source << " to " << dest << " with distance " << distance << std::endl;
 
     }
     infile.close();
@@ -113,6 +114,55 @@ std::vector<std::vector<Vertex*>> Graph::createToyGraphs(const std::string& grap
 
     return graphs;
 }
+
+std::vector<std::vector<Vertex*>> Graph::createExtraFullyConnectedGraphs(const std::string& graphFile) {
+    std::vector<std::vector<Vertex*>> graphs;
+    std::string filePath = "../Extra_Fully_Connected_Graphs/" + graphFile;
+
+    std::ifstream infile(filePath);
+    if (!infile.is_open()) {
+        std::cerr << "Error opening file: " << filePath << std::endl;
+        exit(1);
+    }
+
+    std::string line;
+    while (std::getline(infile, line)) {
+        std::istringstream iss(line);
+        int source = 0, dest = 0;
+        double distance;
+        char comma;
+        if (!(iss >> source >> comma >> dest >> comma >> distance)) {
+            std::cerr << "Error reading line: " << line << std::endl;
+            continue;
+        }
+
+        Vertex *sourceVertex = findVertex(source);
+        if (!sourceVertex) {
+            sourceVertex = new Vertex(source);
+            addVertex(*sourceVertex);
+            std::cout << "Created new source vertex: " << source << std::endl;
+        }
+        Vertex *destVertex = findVertex(dest);
+        if (!destVertex) {
+            destVertex = new Vertex(dest);
+            addVertex(*destVertex);
+            std::cout << "Created new destination vertex: " << dest << std::endl;
+        }
+
+        std::cout << "Adding edge from " << source << " to " << dest << " with distance " << distance << std::endl;
+        sourceVertex->addEdge(destVertex, distance);
+    }
+    infile.close();
+
+    std::vector<Vertex*> graph;
+    for (const auto& pair : vertexMap) {
+        graph.push_back(pair.second);
+    }
+    graphs.push_back(graph);
+
+    return graphs;
+}
+
 
 
 void Graph::printGraph(const std::vector<Vertex*>& graph) {

@@ -16,11 +16,13 @@ public:
 
     Vertex * findVertex(const int &id) const;
 
-    bool addVertex(const Vertex& vertex);
+    bool addVertex(Vertex& vertex);
 
     void printGraph(const std::vector<Vertex*>& graph);
 
     std::vector<std::vector<Vertex*>> createToyGraphs(const std::string& graphFile);
+
+    std::vector<std::vector<Vertex*>> createExtraFullyConnectedGraphs(const std::string& graphFile);
 
 protected:
 

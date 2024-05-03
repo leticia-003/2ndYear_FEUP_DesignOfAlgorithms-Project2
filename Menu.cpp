@@ -75,5 +75,53 @@ std::string getDatasetChoice() {
         graphHandler.printGraph(toyGraphs[0]); // Passing the first toy graph to printGraph
     }
 
+    if (dataset == "Extra Fully Connected Graphs") {
+
+        std::vector<std::string> graphFiles = {
+                "edges_25.csv",
+                "edges_50.csv",
+                "edges_75.csv",
+                "edges_100.csv",
+                "edges_200.csv",
+                "edges_300.csv",
+                "edges_400.csv",
+                "edges_500.csv",
+                "edges_600.csv",
+                "edges_700.csv",
+                "edges_800.csv",
+                "edges_900.csv"
+        };
+
+        std::cout << std::endl;
+        std::cout << "+-------------------------------------+" << std::endl;
+        std::cout << "|     Choose the number of NODES:     |" << std::endl;
+        std::cout << "+-------------------------------------+" << std::endl;
+        std::cout << "|  1.  25 Nodes                       |" << std::endl;
+        std::cout << "|  2.  50 Nodes                       |" << std::endl;
+        std::cout << "|  3.  75 Nodes                       |" << std::endl;
+        std::cout << "|  4.  100 Nodes                      |" << std::endl;
+        std::cout << "|  5.  200 Nodes                      |" << std::endl;
+        std::cout << "|  6.  300 Nodes                      |" << std::endl;
+        std::cout << "|  7.  400 Nodes                      |" << std::endl;
+        std::cout << "|  8.  500 Nodes                      |" << std::endl;
+        std::cout << "|  9.  600 Nodes                      |" << std::endl;
+        std::cout << "|  10. 700 Nodes                      |" << std::endl;
+        std::cout << "|  11. 800 Nodes                      |" << std::endl;
+        std::cout << "|  12. 900 Nodes                      |" << std::endl;
+        std::cout << "+-------------------------------------+" << std::endl;
+
+        int graphChoice;
+        do {
+            std::cout << "Enter your choice (1-12): ";
+            std::cin >> graphChoice;
+        } while (graphChoice < 1 || graphChoice > 12);
+
+        std::string filePath = "../Extra_Fully_Connected_Graphs/" + graphFiles[graphChoice - 1];
+
+        std::vector<std::vector<Vertex*>> fullyConnectedGraphs = graphHandler.createExtraFullyConnectedGraphs(filePath);
+
+        graphHandler.printGraph(fullyConnectedGraphs[0]);
+    }
+
     return dataset;
 }
