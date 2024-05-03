@@ -24,6 +24,8 @@ public:
 
     std::vector<std::vector<Vertex*>> createExtraFullyConnectedGraphs(const std::string& graphFile);
 
+    std::vector<std::vector<Vertex*>> createRealWorldGraphs(const std::string& graphFile);
+
 protected:
 
     std::unordered_map<int, Vertex *> vertexMap;

@@ -94,7 +94,7 @@ std::string getDatasetChoice() {
 
         std::cout << std::endl;
         std::cout << "+-------------------------------------+" << std::endl;
-        std::cout << "|     Choose the number of NODES:     |" << std::endl;
+        std::cout << "|     Choose the number of NODES      |" << std::endl;
         std::cout << "+-------------------------------------+" << std::endl;
         std::cout << "|  1.  25 Nodes                       |" << std::endl;
         std::cout << "|  2.  50 Nodes                       |" << std::endl;
@@ -121,6 +121,39 @@ std::string getDatasetChoice() {
         std::vector<std::vector<Vertex*>> fullyConnectedGraphs = graphHandler.createExtraFullyConnectedGraphs(filePath);
 
         graphHandler.printGraph(fullyConnectedGraphs[0]);
+    }
+
+    if (dataset == "Real-World Graphs") {
+
+        std::cout << std::endl;
+        std::cout << "+-----------------------------------------+" << std::endl;
+        std::cout << "|       Available Real World Graphs       |" << std::endl;
+        std::cout << "+-----------------------------------------+" << std::endl;
+        std::cout << "|  1. Graph 1 (1K nodes and ~500K edges)  |" << std::endl;
+        std::cout << "|  2. Graph 2 (5K nodes and ~4M edges)    |" << std::endl;
+        std::cout << "|  3. Graph 3 (10K nodes and ~10M edges)  |" << std::endl;
+        std::cout << "+-----------------------------------------+" << std::endl;
+
+        int graphChoice;
+        do {
+            std::cout << "Enter your choice (1, 2, or 3): ";
+            std::cin >> graphChoice;
+        } while (graphChoice < 1 || graphChoice > 3);
+
+        std::string folderName;
+        if (graphChoice == 1) {
+            folderName = "graph1";
+        } else if (graphChoice == 2) {
+            folderName = "graph2";
+        } else if (graphChoice == 3) {
+            folderName = "graph3";
+        }
+
+        std::string filePath = "../Real-World Graphs/" + folderName + "/edges.csv";
+
+        std::vector<std::vector<Vertex*>> realWorldGraphs = graphHandler.createRealWorldGraphs(filePath);
+
+        graphHandler.printGraph(realWorldGraphs[0]);
     }
 
     return dataset;
