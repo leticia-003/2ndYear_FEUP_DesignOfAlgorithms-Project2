@@ -72,7 +72,7 @@ std::string getDatasetChoice() {
             std::cin >> graphChoice;
         } while (graphChoice < 1 || graphChoice > graphFiles.size());
 
-        std::vector<std::vector<Vertex*>> toyGraphs = graphHandler.createToyGraphs(graphFiles[graphChoice - 1]);
+        Graph toyGraph = graphHandler.createToyGraphs(graphFiles[graphChoice - 1]);
 
         std::cout << std::endl;
         std::cout << "+-------------------------------------+" << std::endl;
@@ -93,18 +93,11 @@ std::string getDatasetChoice() {
         switch (actionChoice) {
             case 1:
                 // Print the graph
-                graphHandler.printGraph(toyGraphs[0]);
+                graphHandler.printGraph(toyGraph);
                 break;
             case 2:
-                minCost = algorithms.tspBacktracking(toyGraphs[0], bestPath, elapsedTime);  // Assuming you want to solve TSP on the first graph in your vector
-                std::cout << "Minimum TSP cost: " << minCost << std::endl;
-
-                std::cout << "Path Taken: ";
-                for (int v : bestPath) {
-                    std::cout << v << " ";
-                }
-                std::cout << std::endl;
-                std::cout << "Time Taken: " << elapsedTime << " seconds" << std::endl;
+                // Perform TSP backtracking
+                algorithms.backtrackingAlgorithm(toyGraph);
                 break;
             default:
                 std::cout << "Invalid choice" << std::endl;
@@ -156,7 +149,6 @@ std::string getDatasetChoice() {
 
         std::vector<std::vector<Vertex*>> fullyConnectedGraphs = graphHandler.createExtraFullyConnectedGraphs(filePath);
 
-        graphHandler.printGraph(fullyConnectedGraphs[0]);
     }
 
     if (dataset == "Real-World Graphs") {
@@ -189,7 +181,6 @@ std::string getDatasetChoice() {
 
         std::vector<std::vector<Vertex*>> realWorldGraphs = graphHandler.createRealWorldGraphs(filePath);
 
-        graphHandler.printGraph(realWorldGraphs[0]);
     }
 
     return dataset;

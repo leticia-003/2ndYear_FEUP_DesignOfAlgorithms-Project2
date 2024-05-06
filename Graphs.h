@@ -18,13 +18,21 @@ public:
 
     bool addVertex(Vertex& vertex);
 
-    void printGraph(const std::vector<Vertex*>& graph);
+    void printGraph(const Graph& graph);
 
-    std::vector<std::vector<Vertex*>> createToyGraphs(const std::string& graphFile);
+    Edge* getEdge(int sourceId, int destId) const;
+
+    std::vector<Vertex*> getVertices() const;
+
+    double getDistance(int sourceId, int destId) const;
+
+    Graph createToyGraphs(const std::string& graphFile);
 
     std::vector<std::vector<Vertex*>> createExtraFullyConnectedGraphs(const std::string& graphFile);
 
     std::vector<std::vector<Vertex*>> createRealWorldGraphs(const std::string& graphFile);
+
+    unsigned size() const;
 
 protected:
 

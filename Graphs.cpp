@@ -13,6 +13,10 @@ const std::unordered_map<int, Vertex *> & Graph::getVertexMap() const {
     return vertexMap;
 }
 
+unsigned Graph::size() const {
+    return vertexMap.size();
+}
+
 Vertex * Graph::findVertex(const int &id) const {
     auto iter = vertexMap.find(id);
     if (iter != vertexMap.end()) {
@@ -29,7 +33,45 @@ bool Graph::addVertex(Vertex &vertex) {
     return true;
 }
 
+std::vector<Vertex*> Graph::getVertices() const {
+    std::vector<Vertex*> vertices;
+    for (const auto& pair : vertexMap) {
+        vertices.push_back(pair.second);
+    }
+    return vertices;
+}
 
+Edge* Graph::getEdge(int sourceId, int destId) const {
+    // First, find the source vertex
+    Vertex* sourceVertex = findVertex(sourceId);
+    if (!sourceVertex) {
+        std::cerr << "Source vertex with ID " << sourceId << " not found." << std::endl;
+        return nullptr;
+    }
+
+    // Now, find the edge with the destination vertex ID
+    for (Edge* edge : sourceVertex->getAdj()) {
+        if (edge->getDest()->getId() == destId) {
+            return edge;
+        }
+    }
+
+    // If no edge found, print an error message and return nullptr
+    std::cerr << "Edge from vertex " << sourceId << " to vertex " << destId << " not found." << std::endl;
+    return nullptr;
+}
+
+double Graph::getDistance(int sourceId, int destId) const {
+    Vertex* sourceVertex = findVertex(sourceId);
+    Vertex* destVertex = findVertex(destId);
+    if (sourceVertex && destVertex) {
+        Edge* edge = sourceVertex->getEdge(destId);
+        if (edge) {
+            return edge->getDistance();
+        }
+    }
+    return INF; // If there's no edge, return infinity or some large value
+}
 
 // Function to calculate Haversine distance between two latitude-longitude points
 double haversine(double lat1, double lon1, double lat2, double lon2) {
@@ -52,8 +94,8 @@ double haversine(double lat1, double lon1, double lat2, double lon2) {
     return distance;
 }
 
-std::vector<std::vector<Vertex*>> Graph::createToyGraphs(const std::string& graphFile) {
-    std::vector<std::vector<Vertex*>> graphs;
+Graph Graph::createToyGraphs(const std::string& graphFile) {
+    Graph graph; // Create a new graph instance to populate
 
     // Add ".csv" extension to the provided file name
     std::string filePath = "../Toy-Graphs/" + graphFile;
@@ -61,15 +103,15 @@ std::vector<std::vector<Vertex*>> Graph::createToyGraphs(const std::string& grap
     std::ifstream infile(filePath);
     if (!infile.is_open()) {
         std::cerr << "Error opening file: " << filePath << std::endl;
-        exit(1);
+        exit(1); // Or handle the error more gracefully
     }
 
     std::string line;
-    bool firstLine = true; // Flag to indicate if it's the first line
+    bool firstLine = true; // Skip header line if exists
 
     while (std::getline(infile, line)) {
         if (firstLine) {
-            // Skip the first line
+            // Skip the first line (considered as a header)
             firstLine = false;
             continue;
         }
@@ -84,36 +126,28 @@ std::vector<std::vector<Vertex*>> Graph::createToyGraphs(const std::string& grap
             continue; // Skip invalid lines
         }
 
-        // Add or find vertices
-        Vertex *sourceVertex = findVertex(source);
+        // Add or find vertices and add edges
+        Vertex* sourceVertex = graph.findVertex(source);
         if (!sourceVertex) {
             sourceVertex = new Vertex(source);
-            //std::cout << "Creating new source vertex: " << source << std::endl;
-            addVertex(*sourceVertex);
+            graph.addVertex(*sourceVertex);
         }
-        Vertex *destVertex = findVertex(dest);
+        Vertex* destVertex = graph.findVertex(dest);
         if (!destVertex) {
             destVertex = new Vertex(dest);
-            //std::cout << "Creating new destination vertex: " << dest << std::endl;
-            addVertex(*destVertex);
+            graph.addVertex(*destVertex);
         }
 
         // Add the edge
         sourceVertex->addEdge(destVertex, distance);
-        //std::cout << "Adding edge from " << source << " to " << dest << " with distance " << distance << std::endl;
-
+        // Add the reverse edge
+        destVertex->addEdge(sourceVertex, distance);
     }
     infile.close();
 
-    // After reading all the vertices and edges, add the graph to graphs
-    std::vector<Vertex*> graph;
-    for (const auto& pair : vertexMap) {
-        graph.push_back(pair.second);
-    }
-    graphs.push_back(graph);
-
-    return graphs;
+    return graph;
 }
+
 
 std::vector<std::vector<Vertex*>> Graph::createExtraFullyConnectedGraphs(const std::string& graphFile) {
     std::vector<std::vector<Vertex*>> graphs;
@@ -226,9 +260,9 @@ std::vector<std::vector<Vertex*>> Graph::createRealWorldGraphs(const std::string
 
 
 
-void Graph::printGraph(const std::vector<Vertex*>& graph) {
+void Graph::printGraph(const Graph& graph) {
     std::cout << "Graph:" << std::endl;
-    for (const auto& vertex : graph) {
+    for (const auto& vertex : graph.getVertices()) {
         std::cout << "Vertex " << vertex->getId() << ": ";
         for (const auto& edge : vertex->getAdj()) {
             std::cout << edge->getDest()->getId() << " ";
@@ -236,3 +270,5 @@ void Graph::printGraph(const std::vector<Vertex*>& graph) {
         std::cout << std::endl;
     }
 }
+
+
