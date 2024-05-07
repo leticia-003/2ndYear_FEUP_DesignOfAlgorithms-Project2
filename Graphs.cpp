@@ -94,6 +94,29 @@ double haversine(double lat1, double lon1, double lat2, double lon2) {
     return distance;
 }
 
+bool Graph::isComplete() const {
+    // Get the total number of vertices in the graph
+    unsigned n = vertexMap.size();
+
+    // Calculate the expected number of edges in a complete graph with 'n' vertices
+    unsigned expectedEdges = (n * (n - 1)) / 2;
+
+    // Count the actual number of edges in the graph
+    unsigned actualEdges = 0;
+
+    // Iterate over each vertex in the graph
+    for (const auto& vertexPair : vertexMap) {
+        Vertex* vertex = vertexPair.second;
+
+        // Count the number of edges connected to this vertex
+        actualEdges += vertex->getAdj().size();
+    }
+
+    // Check if the actual number of edges matches the expected number
+    return actualEdges == expectedEdges;
+}
+
+
 Graph Graph::createToyGraphs(const std::string& graphFile) {
     Graph graph; // Create a new graph instance to populate
 

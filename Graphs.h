@@ -24,6 +24,8 @@ public:
 
     std::vector<Vertex*> getVertices() const;
 
+    bool isComplete() const;
+
     double getDistance(int sourceId, int destId) const;
 
     Graph createToyGraphs(const std::string& graphFile);

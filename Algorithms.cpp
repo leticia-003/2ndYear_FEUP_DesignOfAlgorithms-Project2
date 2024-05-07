@@ -88,3 +88,57 @@ double Algorithms::tspBacktracking(const Graph& graph, unsigned currentVertex, u
 
     return minPathCost;
 }
+
+void Algorithms::approximationAlgorithm(const Graph& graph, const std::string& graphFile) {
+    auto start = std::chrono::high_resolution_clock::now();
+    std::vector<unsigned> approxPath;
+    std::vector<bool> visited(graph.size(), false);
+    double approxCost = 0.0;
+
+    // Start at vertex 0
+    unsigned currentVertex = 0;
+    visited[currentVertex] = true;
+    approxPath.push_back(currentVertex);
+
+    // Repeat until all vertices are visited
+    while (approxPath.size() < graph.size()) {
+        double minDistance = std::numeric_limits<double>::max();
+        unsigned nextVertex = 0;
+
+        // Find the nearest unvisited vertex
+        for (unsigned i = 0; i < graph.size(); ++i) {
+            if (!visited[i]) {
+                double distance = getDistance(graph, currentVertex, i);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    nextVertex = i;
+                }
+            }
+        }
+
+        // Move to the nearest unvisited vertex
+        visited[nextVertex] = true;
+        approxPath.push_back(nextVertex);
+        approxCost += minDistance;
+        currentVertex = nextVertex;
+    }
+
+    // Return to the starting vertex
+    approxPath.push_back(0);
+    approxCost += getDistance(graph, currentVertex, 0);
+
+    auto end = std::chrono::high_resolution_clock::now();
+
+    // Print the results
+    std::cout << "Algorithm: Approximation Algorithm" << std::endl;
+    std::cout << "Graph: " << graphFile << std::endl;
+    std::cout << "Time: " << (end - start) / std::chrono::milliseconds(1) << " ms" << std::endl;
+    std::cout << "Minimal Cost: " << approxCost << std::endl;
+    std::cout << "Corresponding Path: ";
+    for (size_t i = 0; i < approxPath.size(); ++i) {
+        std::cout << std::setw(3) << std::setfill(' ') << std::left << approxPath[i];
+        if (i != approxPath.size() - 1)
+            std::cout << " -> ";
+    }
+    std::cout << std::endl;
+}

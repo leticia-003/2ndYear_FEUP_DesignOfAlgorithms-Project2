@@ -75,15 +75,16 @@ std::string getDatasetChoice() {
         Graph toyGraph = graphHandler.createToyGraphs(graphFiles[graphChoice - 1]);
 
         std::cout << std::endl;
-        std::cout << "+-------------------------------------+" << std::endl;
-        std::cout << "|          Choose an action           |" << std::endl;
-        std::cout << "+-------------------------------------+" << std::endl;
-        std::cout << "|  1. Print the graph                 |" << std::endl;
-        std::cout << "|  2. TSP Backtracking                |" << std::endl;
-        std::cout << "+-------------------------------------+" << std::endl;
+        std::cout << "+----------------------------------------+" << std::endl;
+        std::cout << "|          Choose an action              |" << std::endl;
+        std::cout << "+----------------------------------------+" << std::endl;
+        std::cout << "|  1. Print the graph                    |" << std::endl;
+        std::cout << "|  2. TSP Backtracking                   |" << std::endl;
+        std::cout << "|  3. Triangular Approximation Heuristic |" << std::endl;
+        std::cout << "+----------------------------------------+" << std::endl;
 
         int actionChoice;
-        std::cout << "Enter your choice (1 or 2): ";
+        std::cout << "Enter your choice (1, 2 or 3): ";
         std::cin >> actionChoice;
 
         double minCost = 0.0;
@@ -98,6 +99,14 @@ std::string getDatasetChoice() {
             case 2:
                 // Perform TSP backtracking
                 algorithms.backtrackingAlgorithm(toyGraph, graphFiles[graphChoice - 1]);
+                break;
+            case 3:
+                if (!toyGraph.isComplete()) {
+                    std::cout << "The graph is not fully connected. Unable to apply the Triangular Approximation Heuristic." << std::endl;
+                } else {
+                    algorithms.approximationAlgorithm(toyGraph, graphFiles[graphChoice - 1]);
+                }
+
                 break;
             default:
                 std::cout << "Invalid choice" << std::endl;
