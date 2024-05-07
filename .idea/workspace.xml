@@ -24,8 +24,6 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Algorithms.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Algorithms.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Algorithms.h" beforeDir="false" afterPath="$PROJECT_DIR$/Algorithms.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Graphs.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Graphs.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Graphs.h" beforeDir="false" afterPath="$PROJECT_DIR$/Graphs.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Menu.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Menu.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -89,11 +87,6 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -106,7 +99,8 @@
       <workItem from="1714244913216" duration="989000" />
       <workItem from="1714246555005" duration="2171000" />
       <workItem from="1714330323728" duration="20363000" />
-      <workItem from="1714473963510" duration="22048000" />
+      <workItem from="1714473963510" duration="24698000" />
+      <workItem from="1715117938563" duration="413000" />
     </task>
     <servers />
   </component>

@@ -97,7 +97,7 @@ std::string getDatasetChoice() {
                 break;
             case 2:
                 // Perform TSP backtracking
-                algorithms.backtrackingAlgorithm(toyGraph);
+                algorithms.backtrackingAlgorithm(toyGraph, graphFiles[graphChoice - 1]);
                 break;
             default:
                 std::cout << "Invalid choice" << std::endl;

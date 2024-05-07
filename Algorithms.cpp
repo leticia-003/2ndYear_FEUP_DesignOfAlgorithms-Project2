@@ -1,32 +1,38 @@
 //
 // Created by Letícia Coelho on 03/05/2024.
 //
-
 #include "Graphs.h"
 #include "Algorithms.h"
 #include <iostream>
 #include <vector>
 #include <limits>
+#include <iomanip>
 
-void Algorithms::backtrackingAlgorithm(const Graph& graph) {
+void Algorithms::backtrackingAlgorithm(const Graph& graph, const std::string& graphFile) {
     std::vector<unsigned> path, bestPath;
     auto start = std::chrono::high_resolution_clock::now();
     std::vector<bool> visited(graph.size(), false);
-
-    std::cout << "Starting backtracking..." << std::endl;  // Debug statement
 
     double minCost = std::numeric_limits<double>::max();
     double cost = tspBacktracking(graph, 0, 1, path, visited, 0.0, minCost, bestPath); // count starts at 1 because vertex 0 is counted as visited
     auto end = std::chrono::high_resolution_clock::now();
 
-    std::cout << "Backtracking completed." << std::endl;  // Debug statement
+    std::cout << "Algorithm: TSP Backtracking" << std::endl;
+    std::cout << "Graph: ";
+    std::string graphName = graphFile.substr(0, graphFile.find_last_of('.'));
+    std:: cout << graphName << std::endl;
+    std::cout << "Time: ";
+    std::cout << (end - start) / std::chrono::milliseconds(1) << " ms" << std::endl;
+    std::cout << "Minimal Cost: ";
+    std::cout << minCost << std::endl;
+    std::cout << "Corresponding Path: ";
 
-    std::cout << "\nAccording to the backtracking algorithm, the minimal cost circuit visiting all nodes is:" << std::endl;
-    for (unsigned p : bestPath) {
-        std::cout << " -> " << p;
+    // Center-align the path
+    for (size_t i = 0; i < bestPath.size(); ++i) {
+        std::cout << std::setfill(' ') << std::left << bestPath[i];
+        if (i != bestPath.size() - 1)
+            std::cout << " -> ";
     }
-    std::cout << "\nThe cost of the circuit is " << minCost << "." << std::endl;
-    std::cout << "\nThe algorithm took approximately " << (end - start) / std::chrono::milliseconds(1) << " milliseconds to execute." << std::endl;
 }
 
 

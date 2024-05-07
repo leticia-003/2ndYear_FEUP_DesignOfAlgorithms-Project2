@@ -11,7 +11,7 @@
 
 class Algorithms {
 public:
-    void backtrackingAlgorithm(const Graph& graph);
+    void backtrackingAlgorithm(const Graph& graph, const std::string& graphFile);
     double getDistance(const Graph& graph, int sourceId, int destId) const;
     double tspBacktracking(const Graph& graph, unsigned currentVertex, unsigned count, std::vector<unsigned>& currentPath, std::vector<bool>& visited, double currentCost, double& minCost, std::vector<unsigned>& bestPath) const;
 
