@@ -172,8 +172,9 @@ Graph Graph::createToyGraphs(const std::string& graphFile) {
 }
 
 
-std::vector<std::vector<Vertex*>> Graph::createExtraFullyConnectedGraphs(const std::string& graphFile) {
-    std::vector<std::vector<Vertex*>> graphs;
+Graph Graph::createExtraFullyConnectedGraph(const std::string& graphFile) {
+    Graph graph; // Create a new graph instance to populate
+
     std::string filePath = "../Extra_Fully_Connected_Graphs/" + graphFile;
 
     std::ifstream infile(filePath);
@@ -193,32 +194,28 @@ std::vector<std::vector<Vertex*>> Graph::createExtraFullyConnectedGraphs(const s
             continue;
         }
 
-        Vertex *sourceVertex = findVertex(source);
+        Vertex *sourceVertex = graph.findVertex(source);
         if (!sourceVertex) {
             sourceVertex = new Vertex(source);
-            addVertex(*sourceVertex);
+            graph.addVertex(*sourceVertex);
             std::cout << "Created new source vertex: " << source << std::endl;
         }
-        Vertex *destVertex = findVertex(dest);
+        Vertex *destVertex = graph.findVertex(dest);
         if (!destVertex) {
             destVertex = new Vertex(dest);
-            addVertex(*destVertex);
+            graph.addVertex(*destVertex);
             std::cout << "Created new destination vertex: " << dest << std::endl;
         }
 
         std::cout << "Adding edge from " << source << " to " << dest << " with distance " << distance << std::endl;
         sourceVertex->addEdge(destVertex, distance);
+        destVertex->addEdge(sourceVertex, distance);
     }
     infile.close();
 
-    std::vector<Vertex*> graph;
-    for (const auto& pair : vertexMap) {
-        graph.push_back(pair.second);
-    }
-    graphs.push_back(graph);
-
-    return graphs;
+    return graph;
 }
+
 
 
 std::vector<std::vector<Vertex*>> Graph::createRealWorldGraphs(const std::string& graphFile) {

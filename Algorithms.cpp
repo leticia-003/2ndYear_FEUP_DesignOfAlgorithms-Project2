@@ -89,55 +89,63 @@ double Algorithms::tspBacktracking(const Graph& graph, unsigned currentVertex, u
     return minPathCost;
 }
 
-void Algorithms::approximationAlgorithm(const Graph& graph, const std::string& graphFile) {
+void Algorithms::triangularApproximationTSP(const Graph& graph, const std::string& graphFile) {
     auto start = std::chrono::high_resolution_clock::now();
-    std::vector<unsigned> approxPath;
+
     std::vector<bool> visited(graph.size(), false);
-    double approxCost = 0.0;
+    std::vector<unsigned> path;
+    double totalCost = 0.0;
+    unsigned current = 0; // Start at node 0
+    path.push_back(current);
+    visited[current] = true;
 
-    // Start at vertex 0
-    unsigned currentVertex = 0;
-    visited[currentVertex] = true;
-    approxPath.push_back(currentVertex);
+    // Nearest neighbor heuristic
+    for (unsigned i = 1; i < graph.size(); ++i) {
+        double nearestDistance = std::numeric_limits<double>::max();
+        unsigned nearestVertex = 0;
 
-    // Repeat until all vertices are visited
-    while (approxPath.size() < graph.size()) {
-        double minDistance = std::numeric_limits<double>::max();
-        unsigned nextVertex = 0;
-
-        // Find the nearest unvisited vertex
-        for (unsigned i = 0; i < graph.size(); ++i) {
-            if (!visited[i]) {
-                double distance = getDistance(graph, currentVertex, i);
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    nextVertex = i;
+        for (unsigned j = 0; j < graph.size(); ++j) {
+            if (!visited[j]) {
+                double distance = getDistance(graph, current, j);
+                if (distance < nearestDistance) {
+                    nearestDistance = distance;
+                    nearestVertex = j;
                 }
             }
         }
 
-        // Move to the nearest unvisited vertex
-        visited[nextVertex] = true;
-        approxPath.push_back(nextVertex);
-        approxCost += minDistance;
-        currentVertex = nextVertex;
+        if (nearestDistance == std::numeric_limits<double>::max()) {
+            std::cerr << "No valid path found from " << current << std::endl;
+            break; // Break out of the loop if no valid path can be found (isolated node or disconnected graph)
+        }
+
+        visited[nearestVertex] = true;
+        path.push_back(nearestVertex);
+        totalCost += nearestDistance;
+        current = nearestVertex;
     }
 
-    // Return to the starting vertex
-    approxPath.push_back(0);
-    approxCost += getDistance(graph, currentVertex, 0);
+    // Return to the starting node
+    double returnCost = getDistance(graph, current, 0);
+    totalCost += returnCost;
+    path.push_back(0); // Complete the circuit by returning to the start
 
     auto end = std::chrono::high_resolution_clock::now();
 
-    // Print the results
-    std::cout << "Algorithm: Approximation Algorithm" << std::endl;
-    std::cout << "Graph: " << graphFile << std::endl;
-    std::cout << "Time: " << (end - start) / std::chrono::milliseconds(1) << " ms" << std::endl;
-    std::cout << "Minimal Cost: " << approxCost << std::endl;
-    std::cout << "Corresponding Path: ";
-    for (size_t i = 0; i < approxPath.size(); ++i) {
-        std::cout << std::setw(3) << std::setfill(' ') << std::left << approxPath[i];
-        if (i != approxPath.size() - 1)
+    // Output the results
+    std::cout << "Algorithm: TSP Triangular Approximation" << std::endl;
+    std::cout << "Graph: ";
+    std::string graphName = graphFile.substr(0, graphFile.find_last_of('.'));
+    std::cout << graphName << std::endl;
+    std::cout << "Time: ";
+    std::cout << (end - start) / std::chrono::milliseconds(1) << " ms" << std::endl;
+    std::cout << "Total Cost: ";
+    std::cout << totalCost << std::endl;
+    std::cout << "Path: ";
+
+    for (size_t i = 0; i < path.size(); ++i) {
+        std::cout << std::setfill(' ') << std::left << path[i];
+        if (i != path.size() - 1)
             std::cout << " -> ";
     }
     std::cout << std::endl;

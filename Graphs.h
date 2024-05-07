@@ -30,7 +30,7 @@ public:
 
     Graph createToyGraphs(const std::string& graphFile);
 
-    std::vector<std::vector<Vertex*>> createExtraFullyConnectedGraphs(const std::string& graphFile);
+    Graph createExtraFullyConnectedGraph(const std::string& graphFile);
 
     std::vector<std::vector<Vertex*>> createRealWorldGraphs(const std::string& graphFile);
 

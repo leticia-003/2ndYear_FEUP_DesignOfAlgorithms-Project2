@@ -27,7 +27,6 @@
       <change beforePath="$PROJECT_DIR$/Graphs.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Graphs.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Graphs.h" beforeDir="false" afterPath="$PROJECT_DIR$/Graphs.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Menu.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Menu.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -105,7 +104,7 @@
       <workItem from="1714246555005" duration="2171000" />
       <workItem from="1714330323728" duration="20363000" />
       <workItem from="1714473963510" duration="24698000" />
-      <workItem from="1715117938563" duration="4857000" />
+      <workItem from="1715117938563" duration="7869000" />
     </task>
     <servers />
   </component>

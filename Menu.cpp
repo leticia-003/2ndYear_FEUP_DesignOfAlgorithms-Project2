@@ -87,8 +87,6 @@ std::string getDatasetChoice() {
         std::cout << "Enter your choice (1, 2 or 3): ";
         std::cin >> actionChoice;
 
-        double minCost = 0.0;
-        double elapsedTime;
         std::vector<int> bestPath;
 
         switch (actionChoice) {
@@ -104,8 +102,9 @@ std::string getDatasetChoice() {
                 if (!toyGraph.isComplete()) {
                     std::cout << "The graph is not fully connected. Unable to apply the Triangular Approximation Heuristic." << std::endl;
                 } else {
-                    algorithms.approximationAlgorithm(toyGraph, graphFiles[graphChoice - 1]);
+                    algorithms.triangularApproximationTSP(toyGraph, graphFiles[graphChoice - 1]);
                 }
+                algorithms.triangularApproximationTSP(toyGraph, graphFiles[graphChoice - 1]);
 
                 break;
             default:
@@ -114,6 +113,7 @@ std::string getDatasetChoice() {
     }
 
     if (dataset == "Extra Fully Connected Graphs") {
+        Algorithms algorithms;
 
         std::vector<std::string> graphFiles = {
                 "edges_25.csv",
@@ -156,7 +156,34 @@ std::string getDatasetChoice() {
 
         std::string filePath = "../Extra_Fully_Connected_Graphs/" + graphFiles[graphChoice - 1];
 
-        std::vector<std::vector<Vertex*>> fullyConnectedGraphs = graphHandler.createExtraFullyConnectedGraphs(filePath);
+        Graph fullyConnectedGraphs = graphHandler.createExtraFullyConnectedGraph(filePath);
+
+        std::cout << std::endl;
+        std::cout << "+----------------------------------------+" << std::endl;
+        std::cout << "|          Choose an action              |" << std::endl;
+        std::cout << "+----------------------------------------+" << std::endl;
+        std::cout << "|  1. Print the graph                    |" << std::endl;
+        std::cout << "|  2. Triangular Approximation Heuristic |" << std::endl;
+        std::cout << "+----------------------------------------+" << std::endl;
+
+        int actionChoice;
+        std::cout << "Enter your choice (1, 2 or 3): ";
+        std::cin >> actionChoice;
+
+        std::vector<int> bestPath;
+
+        switch (actionChoice) {
+            case 1:
+                // Print the graph
+                graphHandler.printGraph(fullyConnectedGraphs);
+                break;
+            case 2:
+                algorithms.triangularApproximationTSP(fullyConnectedGraphs, graphFiles[graphChoice - 1]);
+                break;
+
+            default:
+                std::cout << "Invalid choice" << std::endl;
+        }
 
     }
 
