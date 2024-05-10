@@ -1,7 +1,10 @@
 #include "Graphs.h"
 #include <cmath>
 #include <fstream>
+#include <queue>
+#include <unordered_set>
 #include <sstream>
+using namespace std;
 
 Graph::~Graph() {
     for (auto& pair : vertexMap) {
@@ -39,6 +42,73 @@ std::vector<Vertex*> Graph::getVertices() const {
         vertices.push_back(pair.second);
     }
     return vertices;
+}
+
+// Compare structure for priority queue
+struct Compare {
+    bool operator()(std::pair<double, Vertex*> const& p1, std::pair<double, Vertex*> const& p2) {
+        return p1.first > p2.first; // Min-heap based on edge distance
+    }
+};
+
+double Graph::mstPrim(int startId) {
+    // Get all vertices in the graph
+    std::vector<Vertex*> vertices = getVertices();
+    if (vertices.empty()) {
+        std::cerr << "The graph is empty." << std::endl;
+        return 0.0;
+    }
+
+    // Find the starting vertex
+    Vertex* startVertex = nullptr;
+    for (Vertex* vertex : vertices) {
+        if (vertex->getId() == startId) {
+            startVertex = vertex;
+            break;
+        }
+    }
+
+    if (!startVertex) {
+        std::cerr << "Starting vertex not found." << std::endl;
+        return 0.0;
+    }
+
+    // Priority queue to select the edge with the smallest weight
+    std::priority_queue<std::pair<double, Vertex*>, std::vector<std::pair<double, Vertex*>>, Compare> pq;
+
+    // Set to keep track of vertices included in MST
+    std::unordered_set<int> inMST;
+
+    // Total cost of the MST
+    double totalCost = 0.0;
+
+    // Add the starting vertex to the priority queue with 0 distance
+    pq.push({0.0, startVertex});
+
+    while (!pq.empty()) {
+        // Get the vertex with the smallest edge weight
+        auto [currentDist, currentVertex] = pq.top();
+        pq.pop();
+
+        // Check if the vertex is already included in MST
+        if (inMST.find(currentVertex->getId()) != inMST.end()) {
+            continue;
+        }
+
+        // Include this vertex in MST and add the edge cost
+        inMST.insert(currentVertex->getId());
+        totalCost += currentDist;
+
+        // Process all adjacent vertices
+        for (Edge* edge : currentVertex->getAdj()) {
+            Vertex* adjVertex = edge->getDest();
+            if (inMST.find(adjVertex->getId()) == inMST.end()) {
+                pq.push({edge->getDistance(), adjVertex});
+            }
+        }
+    }
+
+    return totalCost;
 }
 
 Edge* Graph::getEdge(int sourceId, int destId) const {
@@ -216,73 +286,79 @@ Graph Graph::createExtraFullyConnectedGraph(const std::string& graphFile) {
     return graph;
 }
 
+Graph* Graph::buildRealWorldGraph(unsigned number) {
+    auto graph = new Graph;
+    buildRealWorldGraphNodes(number, graph);
+    buildRealWorldGraphEdges(number, graph);
+    return graph;
+}
 
-
-std::vector<std::vector<Vertex*>> Graph::createRealWorldGraphs(const std::string& graphFile) {
-    std::vector<std::vector<Vertex*>> graphs;
-
-    std::ifstream infile(graphFile);
-    if (!infile.is_open()) {
-        std::cerr << "Error opening file: " << graphFile << std::endl;
-        exit(1);
+void Graph::buildRealWorldGraphNodes(unsigned number, Graph* graph) {
+    std::ifstream file("../Real-world Graphs/graph" + std::to_string(number) + "/nodes.csv");
+    if (!file.is_open()) {
+        std::cerr << "Error opening nodes file for graph " << number << std::endl;
+        return;
     }
 
     std::string line;
-    bool firstLine = true; // Flag to indicate if it's the first line
+    getline(file, line); // Skip header
 
-    while (std::getline(infile, line)) {
-        if (firstLine) {
-            // Skip the first line
-            firstLine = false;
-            continue;
+    while (getline(file, line)) {
+        std::string id, latitude, longitude;
+        std::stringstream input(line);
+        getline(input, id, ',');
+        getline(input, longitude, ',');
+        getline(input, latitude, '\r');
+
+        // Create a new vertex
+        Vertex* newVertex = new Vertex(std::stoi(id));
+
+        // Add node to the graph
+        if (!graph->addVertex(*newVertex)) {
+            std::cerr << "Error adding vertex with ID " << id << " to the graph (already exists)" << std::endl;
+            delete newVertex; // Clean up if adding fails
         }
-
-        std::istringstream iss(line);
-        int source = 0, dest = 0;
-        double distance;
-        char comma;
-        // Read source, destination, and distance
-        if (!(iss >> source >> comma >> dest >> comma >> distance)) {
-            std::cerr << "Error reading line: " << line << std::endl;
-            continue; // Skip invalid lines
-        }
-
-        // Add or find vertices
-        Vertex *sourceVertex = findVertex(source);
-        if (!sourceVertex) {
-            sourceVertex = new Vertex(source);
-            //std::cout << "Creating new source vertex: " << source << std::endl;
-            addVertex(*sourceVertex);
-        }
-        Vertex *destVertex = findVertex(dest);
-        if (!destVertex) {
-            destVertex = new Vertex(dest);
-            //std::cout << "Creating new destination vertex: " << dest << std::endl;
-            addVertex(*destVertex);
-        }
-
-        // Add the edge
-        sourceVertex->addEdge(destVertex, distance);
-        //std::cout << "Adding edge from " << source << " to " << dest << " with distance " << distance << std::endl;
-
     }
-    infile.close();
-
-    // After reading all the vertices and edges, add the graph to graphs
-    std::vector<Vertex*> graph;
-    for (const auto& pair : vertexMap) {
-        graph.push_back(pair.second);
-    }
-    graphs.push_back(graph);
-
-    return graphs;
+    file.close();
 }
 
 
 
-void Graph::printGraph(const Graph& graph) {
+void Graph::buildRealWorldGraphEdges(unsigned number, Graph* graph) {
+    std::ifstream file("../Real-world Graphs/graph" + std::to_string(number) + "/edges.csv");
+    if (!file.is_open()) {
+        std::cerr << "Error opening edges file for graph " << number << std::endl;
+        return;
+    }
+
+    std::string line;
+    getline(file, line); // Skip header
+
+    while (getline(file, line)) {
+        std::string first, second, distance;
+        std::stringstream input(line);
+        getline(input, first, ',');
+        getline(input, second, ',');
+        getline(input, distance, '\r');
+
+        // Find the vertices in the graph
+        Vertex* firstVertex = graph->findVertex(std::stoi(first));
+        Vertex* secondVertex = graph->findVertex(std::stoi(second));
+
+        // If vertices are found, add the edge
+        if (firstVertex && secondVertex) {
+            firstVertex->addEdge(secondVertex, std::stod(distance));
+        } else {
+            std::cerr << "Error: Vertices not found for edge: " << first << " - " << second << std::endl;
+        }
+    }
+    file.close();
+}
+
+
+void Graph::printGraph(const Graph* graph) {
     std::cout << "Graph:" << std::endl;
-    for (const auto& vertex : graph.getVertices()) {
+    for (const auto& vertex : graph->getVertices()) {
         std::cout << "Vertex " << vertex->getId() << ": ";
         for (const auto& edge : vertex->getAdj()) {
             std::cout << edge->getDest()->getId() << " ";

@@ -150,3 +150,4 @@ void Algorithms::triangularApproximationTSP(const Graph& graph, const std::strin
     }
     std::cout << std::endl;
 }
+

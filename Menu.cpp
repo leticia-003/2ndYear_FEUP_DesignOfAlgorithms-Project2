@@ -80,11 +80,12 @@ std::string getDatasetChoice() {
         std::cout << "+----------------------------------------+" << std::endl;
         std::cout << "|  1. Print the graph                    |" << std::endl;
         std::cout << "|  2. TSP Backtracking                   |" << std::endl;
-        std::cout << "|  3. Triangular Approximation Heuristic |" << std::endl;
+        std::cout << "|  3. MST Prim                           |" << std::endl;
+        std::cout << "|  4. Triangular Approximation Heuristic |" << std::endl;
         std::cout << "+----------------------------------------+" << std::endl;
 
         int actionChoice;
-        std::cout << "Enter your choice (1, 2 or 3): ";
+        std::cout << "Enter your choice (1, 2, 3 or 4): ";
         std::cin >> actionChoice;
 
         std::vector<int> bestPath;
@@ -92,13 +93,20 @@ std::string getDatasetChoice() {
         switch (actionChoice) {
             case 1:
                 // Print the graph
-                graphHandler.printGraph(toyGraph);
+                //graphHandler.printGraph(toyGraph);
                 break;
             case 2:
                 // Perform TSP backtracking
                 algorithms.backtrackingAlgorithm(toyGraph, graphFiles[graphChoice - 1]);
                 break;
-            case 3:
+            case 3: {
+                int startId = 0; // Starting vertex ID is fixed at 0
+
+                double mstCost = toyGraph.mstPrim(startId);
+                std::cout << "The cost of the Minimum Spanning Tree is: " << mstCost << std::endl;
+                break;
+            }
+            case 4:
                 if (!toyGraph.isComplete()) {
                     std::cout << "The graph is not fully connected. Unable to apply the Triangular Approximation Heuristic." << std::endl;
                 } else {
@@ -175,7 +183,7 @@ std::string getDatasetChoice() {
         switch (actionChoice) {
             case 1:
                 // Print the graph
-                graphHandler.printGraph(fullyConnectedGraphs);
+                //graphHandler.printGraph(fullyConnectedGraphs);
                 break;
             case 2:
                 algorithms.triangularApproximationTSP(fullyConnectedGraphs, graphFiles[graphChoice - 1]);
@@ -204,18 +212,37 @@ std::string getDatasetChoice() {
             std::cin >> graphChoice;
         } while (graphChoice < 1 || graphChoice > 3);
 
-        std::string folderName;
-        if (graphChoice == 1) {
-            folderName = "graph1";
-        } else if (graphChoice == 2) {
-            folderName = "graph2";
-        } else if (graphChoice == 3) {
-            folderName = "graph3";
+        Graph* realWorldGraph = graphHandler.buildRealWorldGraph(graphChoice);
+
+        std::cout << std::endl;
+        std::cout << "+----------------------------------------+" << std::endl;
+        std::cout << "|          Choose an action              |" << std::endl;
+        std::cout << "+----------------------------------------+" << std::endl;
+        std::cout << "|  1. Print the graph                    |" << std::endl;
+        std::cout << "|  2. MST                                |" << std::endl;
+        std::cout << "|  3. Triangular Approximation Heuristic |" << std::endl;
+        std::cout << "+----------------------------------------+" << std::endl;
+
+        int actionChoice;
+        std::cout << "Enter your choice (1 or 2): ";
+        std::cin >> actionChoice;
+
+        switch (actionChoice) {
+            case 1:
+                // Print the graph
+                graphHandler.printGraph(realWorldGraph);
+                break;
+            case 2: {
+                int startId = 0; // Starting vertex ID is fixed at 0
+
+                double mstCost = realWorldGraph->mstPrim(startId);
+                std::cout << "The cost of the Minimum Spanning Tree is: " << mstCost << std::endl;
+                break;
+            }
+            default:
+                std::cout << "Invalid choice" << std::endl;
         }
 
-        std::string filePath = "../Real-World Graphs/" + folderName + "/edges.csv";
-
-        std::vector<std::vector<Vertex*>> realWorldGraphs = graphHandler.createRealWorldGraphs(filePath);
 
     }
 
