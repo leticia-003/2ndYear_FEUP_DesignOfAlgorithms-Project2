@@ -107,12 +107,11 @@ std::string getDatasetChoice() {
                 break;
             }
             case 4:
-                if (!toyGraph.isComplete()) {
+                if (graphChoice==3) {
                     std::cout << "The graph is not fully connected. Unable to apply the Triangular Approximation Heuristic." << std::endl;
                 } else {
                     algorithms.triangularApproximationTSP(toyGraph, graphFiles[graphChoice - 1]);
                 }
-                algorithms.triangularApproximationTSP(toyGraph, graphFiles[graphChoice - 1]);
 
                 break;
             default:
