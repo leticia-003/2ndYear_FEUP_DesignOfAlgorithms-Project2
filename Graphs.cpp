@@ -97,8 +97,6 @@ double Graph::mstPrim(int startId, std::vector<std::pair<unsigned, unsigned>>& m
 }
 
 
-
-
 Edge* Graph::getEdge(int sourceId, int destId) const {
     // First, find the source vertex
     Vertex* sourceVertex = findVertex(sourceId);

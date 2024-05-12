@@ -107,16 +107,6 @@ std::string getDatasetChoice() {
 
                 // Output the cost of the Minimum Spanning Tree
                 std::cout << "The cost of the Minimum Spanning Tree is: " << mstCost << std::endl;
-
-                // Optionally, you can print the MST if needed
-                int second;
-                std::cout << "The Minimum Spanning Tree is:" << std::endl;
-                for (const auto& edge : mST) {
-                    std::cout << edge.first << " -> ";
-                    second = edge.second;
-                }
-                std::cout << second;
-
                 break;
             }
             case 4:
@@ -195,6 +185,7 @@ std::string getDatasetChoice() {
         std::cout << "+----------------------------------------+" << std::endl;
         std::cout << "|  1. Print the graph                    |" << std::endl;
         std::cout << "|  2. MST Prim                           |" << std::endl;
+        std::cout << "|  3. Triangular Approximation Heuristic |" << std::endl;
         std::cout << "+----------------------------------------+" << std::endl;
 
         int actionChoice;
@@ -217,18 +208,23 @@ std::string getDatasetChoice() {
 
                 // Output the cost of the Minimum Spanning Tree
                 std::cout << "The cost of the Minimum Spanning Tree is: " << mstCost << std::endl;
-
-                // Optionally, you can print the MST if needed
-                int second;
-                std::cout << "The Minimum Spanning Tree is:" << std::endl;
-                for (const auto& edge : mST) {
-                    std::cout << edge.first << " -> ";
-                    second = edge.second;
-                }
-                std::cout << second;
-
-                break;
             }
+            break;
+            case 3: {
+                int startId = 0;  // Or whichever vertex you want to start from
+                std::vector<int> tspPath;
+                Algorithms algo(&fullyConnectedGraphs);
+                double tspCost = algo.tsp2Approximation(startId, tspPath);
+
+                std::cout << "TSP Path: ";
+                for (int vertexId : tspPath) {
+                    std::cout << vertexId << " ";
+                }
+                std::cout << std::endl;
+
+                std::cout << "Total Cost of TSP Path: " << tspCost << std::endl;
+            }
+            break;
 
             default:
                 std::cout << "Invalid choice" << std::endl;
