@@ -99,6 +99,7 @@ std::string getDatasetChoice() {
                 //algorithms.backtrackingAlgorithm(toyGraph, graphFiles[graphChoice - 1]);
                 break;
             case 3: {
+                auto startTime = std::chrono::high_resolution_clock::now();
                 int startId = 0; // Starting vertex ID is fixed at 0
 
                 // Call mstPrim function
@@ -107,24 +108,35 @@ std::string getDatasetChoice() {
 
                 // Output the cost of the Minimum Spanning Tree
                 std::cout << "The cost of the Minimum Spanning Tree is: " << mstCost << std::endl;
+
+                auto endTime = std::chrono::high_resolution_clock::now();
+                auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
+                std::cout << "Time taken: " << duration << " ms" << std::endl;
                 break;
             }
             case 4:
                 if (graphChoice == 3) {
                     std::cout << "The graph is not fully connected. Unable to apply the Triangular Approximation Heuristic." << std::endl;
                 } else {
+                    auto startTime = std::chrono::high_resolution_clock::now();
                     int startId = 0;  // Or whichever vertex you want to start from
                     std::vector<int> tspPath;
                     Algorithms algo(&toyGraph);
                     double tspCost = algo.tsp2Approximation(startId, tspPath);
 
                     std::cout << "TSP Path: ";
-                    for (int vertexId : tspPath) {
-                        std::cout << vertexId << " ";
+                    for (size_t i = 0; i < tspPath.size(); ++i) {
+                        std::cout << tspPath[i];
+                        if (i < tspPath.size() - 1) {
+                            std::cout << " -> ";
+                        }
                     }
                     std::cout << std::endl;
 
                     std::cout << "Total Cost of TSP Path: " << tspCost << std::endl;
+                    auto endTime = std::chrono::high_resolution_clock::now();
+                    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
+                    std::cout << "Time taken: " << duration << " ms" << std::endl;
                 }
                 break;
 
@@ -200,6 +212,7 @@ std::string getDatasetChoice() {
                 //graphHandler.printGraph(fullyConnectedGraphs);
                 break;
             case 2: {
+                auto startTime = std::chrono::high_resolution_clock::now();
                 int startId = 0; // Starting vertex ID is fixed at 0
 
                 // Call mstPrim function
@@ -208,21 +221,33 @@ std::string getDatasetChoice() {
 
                 // Output the cost of the Minimum Spanning Tree
                 std::cout << "The cost of the Minimum Spanning Tree is: " << mstCost << std::endl;
+
+                auto endTime = std::chrono::high_resolution_clock::now();
+                auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
+                std::cout << "Time taken: " << duration << " ms" << std::endl;
             }
             break;
             case 3: {
+                auto startTime = std::chrono::high_resolution_clock::now();
                 int startId = 0;  // Or whichever vertex you want to start from
                 std::vector<int> tspPath;
                 Algorithms algo(&fullyConnectedGraphs);
                 double tspCost = algo.tsp2Approximation(startId, tspPath);
 
                 std::cout << "TSP Path: ";
-                for (int vertexId : tspPath) {
-                    std::cout << vertexId << " ";
+                for (size_t i = 0; i < tspPath.size(); ++i) {
+                    std::cout << tspPath[i];
+                    if (i < tspPath.size() - 1) {
+                        std::cout << " -> ";
+                    }
                 }
                 std::cout << std::endl;
 
                 std::cout << "Total Cost of TSP Path: " << tspCost << std::endl;
+
+                auto endTime = std::chrono::high_resolution_clock::now();
+                auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
+                std::cout << "Time taken: " << duration << " ms" << std::endl;
             }
             break;
 

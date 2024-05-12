@@ -149,13 +149,6 @@ double Algorithms::tsp2Approximation(int startId, std::vector<int>& tspPath) con
         }
     }
 
-    std::cout << "TSP path: ";
-    for (int vertex : tspPath) {
-        std::cout << vertex << " -> ";
-    }
-
-    std::cout << "TSP cost: " << tspCost << std::endl;
-
     return tspCost;
 }
 
