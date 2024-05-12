@@ -7,42 +7,46 @@
 using namespace std;
 
 Graph::~Graph() {
-    for (auto& pair : vertexMap) {
-        delete pair.second; // Delete each vertex
+    for (auto& vertex : vertexSet) {
+        delete vertex; // Delete each vertex
     }
 }
 
-const std::unordered_map<int, Vertex *> & Graph::getVertexMap() const {
-    return vertexMap;
+const std::vector<Vertex*>& Graph::getVertices() const {
+    return vertexSet;
 }
 
 unsigned Graph::size() const {
-    return vertexMap.size();
+    return vertexSet.size();
 }
 
-Vertex * Graph::findVertex(const int &id) const {
-    auto iter = vertexMap.find(id);
-    if (iter != vertexMap.end()) {
-        return iter->second;
-    } else {
-        return nullptr;
+
+Vertex* Graph::findVertex(const int& id) const {
+    for (auto vertex : vertexSet) {
+        if (vertex->getId() == id) {
+            return vertex;
+        }
     }
+    return nullptr;
 }
 
-bool Graph::addVertex(Vertex &vertex) {
-    if (findVertex(vertex.getId()) != nullptr)  // This check might be redundant due to how vertices are added
-        return false;
-    vertexMap.insert({vertex.getId(), &vertex});  // Insert the pointer to the existing vertex
+
+bool Graph::addVertex(Vertex& vertex) {
+    if (findVertex(vertex.getId())) {
+        return false; // Vertex with the same ID already exists
+    }
+    vertexSet.push_back(&vertex);
     return true;
 }
 
-std::vector<Vertex*> Graph::getVertices() const {
-    std::vector<Vertex*> vertices;
-    for (const auto& pair : vertexMap) {
-        vertices.push_back(pair.second);
+std::vector<Edge*> Graph::getEdges(int sourceId) const {
+    Vertex* sourceVertex = findVertex(sourceId);
+    if (!sourceVertex) {
+        return {}; // Return empty vector if source vertex not found
     }
-    return vertices;
+    return sourceVertex->getAdj();
 }
+
 
 // Compare structure for priority queue
 struct Compare {
@@ -51,71 +55,47 @@ struct Compare {
     }
 };
 
+
 double Graph::mstPrim(int startId, std::vector<std::pair<unsigned, unsigned>>& mST) const {
-    std::vector<Vertex*> vertices = getVertices();
-    if (vertices.empty()) {
-        std::cerr << "The graph is empty." << std::endl;
-        return 0.0;
+    std::priority_queue<std::pair<double, std::pair<unsigned, unsigned>>, std::vector<std::pair<double, std::pair<unsigned, unsigned>>>, std::greater<std::pair<double, std::pair<unsigned, unsigned>>>> pq;
+    std::unordered_set<unsigned> visited;
+    mST.clear();
+
+    // Push the start vertex and its edges into the priority queue
+    for (auto edge : getEdges(startId)) {
+        pq.push({edge->getDistance(), {startId, edge->getDest()->getId()}});
     }
+    visited.insert(startId);
 
-    Vertex* startVertex = nullptr;
-    for (Vertex* vertex : vertices) {
-        if (vertex->getId() == startId) {
-            startVertex = vertex;
-            break;
-        }
-    }
-
-    if (!startVertex) {
-        std::cerr << "Starting vertex not found." << std::endl;
-        return 0.0;
-    }
-
-    // Priority queue to select the edge with the smallest weight
-    std::priority_queue<std::pair<double, Vertex*>, std::vector<std::pair<double, Vertex*>>, Compare> pq;
-
-    // Set to keep track of vertices included in MST
-    std::unordered_set<int> inMST;
-
-    // Total cost of the MST
     double totalCost = 0.0;
 
-    // Add the starting vertex to the priority queue with 0 distance
-    pq.push({0.0, startVertex});
-
     while (!pq.empty()) {
-        // Get the vertex with the smallest edge weight
-        auto [currentDist, currentVertex] = pq.top();
+        auto [cost, edge] = pq.top();
         pq.pop();
+        unsigned src = edge.first;
+        unsigned dest = edge.second;
 
-        // Check if the vertex is already included in MST
-        if (inMST.find(currentVertex->getId()) != inMST.end()) {
-            continue;
+        if (visited.find(dest) != visited.end()) {
+            continue; // Skip if already visited
         }
 
-        // Include this vertex in MST and add the edge cost
-        inMST.insert(currentVertex->getId());
+        mST.push_back({src, dest});
+        totalCost += cost;
 
-        // Process all adjacent vertices
-        for (Edge* edge : currentVertex->getAdj()) {
-            Vertex* adjVertex = edge->getDest();
-            if (inMST.find(adjVertex->getId()) == inMST.end()) {
-                pq.push({edge->getDistance(), adjVertex});
-                adjVertex->setParent(currentVertex);  // Ensure we can trace the path back to the parent
+        visited.insert(dest);
+
+        // Add adjacent edges of the destination vertex to the priority queue
+        for (auto adjEdge : getEdges(dest)) {
+            unsigned adjDest = adjEdge->getDest()->getId();
+            if (visited.find(adjDest) == visited.end()) {
+                pq.push({adjEdge->getDistance(), {dest, adjDest}});
             }
         }
-
-        // Store the edge of the MST and print the edge
-        if (currentVertex && currentVertex->getParent() && currentVertex->getId() != startId) {
-            mST.push_back({currentVertex->getParent()->getId(), currentVertex->getId()});
-        }
-
-        // Add the edge cost to the total cost
-        totalCost += currentDist;
     }
 
     return totalCost;
 }
+
 
 
 
@@ -152,13 +132,11 @@ double Graph::getDistance(int sourceId, int destId) const {
 }
 
 Vertex* Graph::getVertex(unsigned id) const {
-    // Iterate through vertices to find the one with the given ID
-    for (const auto& pair : vertexMap) {
-        if (pair.first == id) {
-            return pair.second;
+    for (auto vertex : vertexSet) {
+        if (vertex->getId() == id) {
+            return vertex;
         }
     }
-    // If vertex with given ID is not found, return nullptr
     return nullptr;
 }
 
@@ -182,28 +160,6 @@ double Graph::haversine(double lat1, double lon1, double lat2, double lon2) cons
     double distance = R * c;
 
     return distance;
-}
-
-bool Graph::isComplete() const {
-    // Get the total number of vertices in the graph
-    unsigned n = vertexMap.size();
-
-    // Calculate the expected number of edges in a complete graph with 'n' vertices
-    unsigned expectedEdges = (n * (n - 1)) / 2;
-
-    // Count the actual number of edges in the graph
-    unsigned actualEdges = 0;
-
-    // Iterate over each vertex in the graph
-    for (const auto& vertexPair : vertexMap) {
-        Vertex* vertex = vertexPair.second;
-
-        // Count the number of edges connected to this vertex
-        actualEdges += vertex->getAdj().size();
-    }
-
-    // Check if the actual number of edges matches the expected number
-    return actualEdges == expectedEdges;
 }
 
 
@@ -396,6 +352,7 @@ void Graph::dfsTree(unsigned startId, std::vector<unsigned>& tree) const {
     dfsHelper(startId, visited, tree);
 }
 
+
 void Graph::dfsHelper(unsigned currentId, std::unordered_set<unsigned>& visited, std::vector<unsigned>& tree) const {
     // Mark the current vertex as visited
     visited.insert(currentId);
@@ -403,11 +360,18 @@ void Graph::dfsHelper(unsigned currentId, std::unordered_set<unsigned>& visited,
     // Add the current vertex to the tree
     tree.push_back(currentId);
 
-    // Find the current vertex in the map
-    auto it = vertexMap.find(currentId);
-    if (it != vertexMap.end()) {
+    // Find the current vertex in the vector
+    Vertex* currentVertex = nullptr;
+    for (auto vertex : vertexSet) {
+        if (vertex->getId() == currentId) {
+            currentVertex = vertex;
+            break;
+        }
+    }
+
+    if (currentVertex) {
         // Iterate over adjacent vertices
-        for (const auto& edge : it->second->getAdj()) {
+        for (const auto& edge : currentVertex->getAdj()) {
             unsigned adjId = edge->getDest()->getId();
             // If the adjacent vertex is not visited, recursively call DFS on it
             if (visited.find(adjId) == visited.end()) {

@@ -13,7 +13,8 @@
 class Graph {
 public:
     ~Graph();
-    const std::unordered_map<int, Vertex *> & getVertexMap() const;
+
+    const std::vector<Vertex*>& getVertices() const;
 
     Vertex * findVertex(const int &id) const;
 
@@ -23,11 +24,11 @@ public:
 
     Vertex* getVertex(unsigned id) const;
 
+    std::vector<Edge*> getEdges(int sourceId) const;
+
     double mstPrim(int startId, std::vector<std::pair<unsigned, unsigned>>& mST) const;
 
     Edge* getEdge(int sourceId, int destId) const;
-
-    std::vector<Vertex*> getVertices() const;
 
     bool isComplete() const;
 
@@ -53,7 +54,7 @@ public:
 
 protected:
 
-    std::unordered_map<int, Vertex *> vertexMap;
+    std::vector<Vertex *> vertexSet;
 };
 
 

@@ -121,40 +121,58 @@ double Algorithms::tsp2Approximation(int startId, std::vector<int>& tspPath) con
         mstAdjList[edge.second].push_back(edge.first);
     }
 
-    // Preorder traversal of the MST
+    // Traverse the MST to generate the TSP path
     std::unordered_set<int> visited;
-    preorderTraversal(startId, mstAdjList, visited, tspPath);
+    dfsTraversal(startId, startId, mstAdjList, visited, tspPath);
 
-    // Add the final edge to complete the cycle
+    // Add the distance from the last vertex back to the starting vertex
     tspPath.push_back(startId);
 
     // Calculate the total cost of the TSP path
     double tspCost = 0.0;
     for (size_t i = 0; i < tspPath.size() - 1; ++i) {
         // Find the distance between tspPath[i] and tspPath[i + 1]
-        Vertex* u = nullptr;
-        Vertex* v = nullptr;
-        for (const auto& pair : graph->getVertexMap()) {
-            if (pair.second->getId() == tspPath[i]) {
-                u = pair.second;
-            }
-            if (pair.second->getId() == tspPath[i + 1]) {
-                v = pair.second;
-            }
-            if (u && v) {
-                break;
-            }
-        }
+        Vertex* u = graph->findVertex(tspPath[i]);
+        Vertex* v = graph->findVertex(tspPath[i + 1]);
 
         if (u && v) {
-            for (Edge* edge : u->getAdj()) {
-                if (edge->getDest()->getId() == v->getId()) {
-                    tspCost += edge->getDistance();
-                    break;
-                }
+            const Edge* edge = u->getEdge(v->getId());
+            if (edge) {
+                tspCost += edge->getDistance();
+            } else {
+                // If the edge is not found, calculate the distance using haversine formula
+                double distance = graph->haversine(u->getLatitude(), u->getLongitude(),
+                                                   v->getLatitude(), v->getLongitude());
+                std::cout << "Using haversine to calculate distance between " << u->getId() << " and " << v->getId() << ": " << distance << std::endl;
+                tspCost += distance;
             }
         }
     }
 
+    std::cout << "TSP path: ";
+    for (int vertex : tspPath) {
+        std::cout << vertex << " -> ";
+    }
+
+    std::cout << "TSP cost: " << tspCost << std::endl;
+
     return tspCost;
 }
+
+void Algorithms::dfsTraversal(int u, int parent, const std::unordered_map<int, std::vector<int>>& adjList,
+                              std::unordered_set<int>& visited, std::vector<int>& tspPath) const {
+    visited.insert(u);
+    tspPath.push_back(u);
+
+    // Sort the adjacent vertices in increasing order of their IDs
+    std::vector<int> sortedAdj = adjList.at(u);
+    std::sort(sortedAdj.begin(), sortedAdj.end());
+
+    // Visit the adjacent vertices in the sorted order
+    for (int v : sortedAdj) {
+        if (v != parent && visited.find(v) == visited.end()) {
+            dfsTraversal(v, u, adjList, visited, tspPath);
+        }
+    }
+}
+
