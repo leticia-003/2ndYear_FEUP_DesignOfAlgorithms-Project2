@@ -8,6 +8,7 @@
 #include <iostream>
 #include "VertexEdge.h"
 #include <unordered_map>
+#include <unordered_set>
 
 class Graph {
 public:
@@ -20,7 +21,9 @@ public:
 
     void printGraph(const Graph* graph);
 
-    double mstPrim(int startId);
+    Vertex* getVertex(unsigned id) const;
+
+    double mstPrim(int startId, std::vector<std::pair<unsigned, unsigned>>& mST) const;
 
     Edge* getEdge(int sourceId, int destId) const;
 
@@ -29,6 +32,12 @@ public:
     bool isComplete() const;
 
     double getDistance(int sourceId, int destId) const;
+
+    double haversine(double lat1, double lon1, double lat2, double lon2) const;
+
+    void dfsTree(unsigned startId, std::vector<unsigned>& tree) const;
+
+    void dfsHelper(unsigned currentId, std::unordered_set<unsigned>& visited, std::vector<unsigned>& tree) const;
 
     Graph createToyGraphs(const std::string& graphFile);
 

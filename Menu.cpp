@@ -44,7 +44,6 @@ std::string getDatasetChoice() {
     }
 
     if (dataset == "Toy-Graphs") {
-        Algorithms algorithms;
 
         // List files in the Toy-Graphs directory
         std::vector<std::string> graphFiles;
@@ -97,30 +96,55 @@ std::string getDatasetChoice() {
                 break;
             case 2:
                 // Perform TSP backtracking
-                algorithms.backtrackingAlgorithm(toyGraph, graphFiles[graphChoice - 1]);
+                //algorithms.backtrackingAlgorithm(toyGraph, graphFiles[graphChoice - 1]);
                 break;
             case 3: {
                 int startId = 0; // Starting vertex ID is fixed at 0
 
-                double mstCost = toyGraph.mstPrim(startId);
+                // Call mstPrim function
+                std::vector<std::pair<unsigned, unsigned>> mST;
+                double mstCost = toyGraph.mstPrim(startId, mST);
+
+                // Output the cost of the Minimum Spanning Tree
                 std::cout << "The cost of the Minimum Spanning Tree is: " << mstCost << std::endl;
+
+                // Optionally, you can print the MST if needed
+                int second;
+                std::cout << "The Minimum Spanning Tree is:" << std::endl;
+                for (const auto& edge : mST) {
+                    std::cout << edge.first << " -> ";
+                    second = edge.second;
+                }
+                std::cout << second;
+
                 break;
             }
             case 4:
-                if (graphChoice==3) {
+                if (graphChoice == 3) {
                     std::cout << "The graph is not fully connected. Unable to apply the Triangular Approximation Heuristic." << std::endl;
                 } else {
-                    algorithms.triangularApproximationTSP(toyGraph, graphFiles[graphChoice - 1]);
-                }
+                    int startId = 0;  // Or whichever vertex you want to start from
+                    std::vector<int> tspPath;
+                    Algorithms algo(&toyGraph);
+                    double tspCost = algo.tsp2Approximation(startId, tspPath);
 
+                    std::cout << "TSP Path: ";
+                    for (int vertexId : tspPath) {
+                        std::cout << vertexId << " ";
+                    }
+                    std::cout << std::endl;
+
+                    std::cout << "Total Cost of TSP Path: " << tspCost << std::endl;
+                }
                 break;
+
+
             default:
                 std::cout << "Invalid choice" << std::endl;
         }
     }
 
     if (dataset == "Extra Fully Connected Graphs") {
-        Algorithms algorithms;
 
         std::vector<std::string> graphFiles = {
                 "edges_25.csv",
@@ -170,7 +194,7 @@ std::string getDatasetChoice() {
         std::cout << "|          Choose an action              |" << std::endl;
         std::cout << "+----------------------------------------+" << std::endl;
         std::cout << "|  1. Print the graph                    |" << std::endl;
-        std::cout << "|  2. Triangular Approximation Heuristic |" << std::endl;
+        std::cout << "|  2. MST Prim                           |" << std::endl;
         std::cout << "+----------------------------------------+" << std::endl;
 
         int actionChoice;
@@ -184,9 +208,27 @@ std::string getDatasetChoice() {
                 // Print the graph
                 //graphHandler.printGraph(fullyConnectedGraphs);
                 break;
-            case 2:
-                algorithms.triangularApproximationTSP(fullyConnectedGraphs, graphFiles[graphChoice - 1]);
+            case 2: {
+                int startId = 0; // Starting vertex ID is fixed at 0
+
+                // Call mstPrim function
+                std::vector<std::pair<unsigned, unsigned>> mST;
+                double mstCost = fullyConnectedGraphs.mstPrim(startId, mST);
+
+                // Output the cost of the Minimum Spanning Tree
+                std::cout << "The cost of the Minimum Spanning Tree is: " << mstCost << std::endl;
+
+                // Optionally, you can print the MST if needed
+                int second;
+                std::cout << "The Minimum Spanning Tree is:" << std::endl;
+                for (const auto& edge : mST) {
+                    std::cout << edge.first << " -> ";
+                    second = edge.second;
+                }
+                std::cout << second;
+
                 break;
+            }
 
             default:
                 std::cout << "Invalid choice" << std::endl;
@@ -234,8 +276,8 @@ std::string getDatasetChoice() {
             case 2: {
                 int startId = 0; // Starting vertex ID is fixed at 0
 
-                double mstCost = realWorldGraph->mstPrim(startId);
-                std::cout << "The cost of the Minimum Spanning Tree is: " << mstCost << std::endl;
+                //double mstCost = realWorldGraph->mstPrim(startId);
+                //std::cout << "The cost of the Minimum Spanning Tree is: " << mstCost << std::endl;
                 break;
             }
             default:

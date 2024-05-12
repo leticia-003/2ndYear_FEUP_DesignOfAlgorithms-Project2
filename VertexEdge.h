@@ -30,10 +30,24 @@ public:
 
     Edge* getEdge(int destId);
 
+    Vertex* getParent() const;
+
+    void setParent(Vertex* p);
+
+    double getLatitude() const;
+
+    double getLongitude() const;
+
 protected:
     int id;
 
     std::vector<Edge *> adj;
+
+    double latitude;
+
+    double longitude;
+
+    Vertex* parent;
 
 };
 
@@ -49,6 +63,8 @@ public:
     Edge(Vertex* orig, Vertex* dest, double distance);
 
     Vertex *getDest() const;
+
+    Vertex * getOrig() const;
 
     double getDistance() const;
 

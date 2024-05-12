@@ -51,15 +51,13 @@ struct Compare {
     }
 };
 
-double Graph::mstPrim(int startId) {
-    // Get all vertices in the graph
+double Graph::mstPrim(int startId, std::vector<std::pair<unsigned, unsigned>>& mST) const {
     std::vector<Vertex*> vertices = getVertices();
     if (vertices.empty()) {
         std::cerr << "The graph is empty." << std::endl;
         return 0.0;
     }
 
-    // Find the starting vertex
     Vertex* startVertex = nullptr;
     for (Vertex* vertex : vertices) {
         if (vertex->getId() == startId) {
@@ -97,19 +95,29 @@ double Graph::mstPrim(int startId) {
 
         // Include this vertex in MST and add the edge cost
         inMST.insert(currentVertex->getId());
-        totalCost += currentDist;
 
         // Process all adjacent vertices
         for (Edge* edge : currentVertex->getAdj()) {
             Vertex* adjVertex = edge->getDest();
             if (inMST.find(adjVertex->getId()) == inMST.end()) {
                 pq.push({edge->getDistance(), adjVertex});
+                adjVertex->setParent(currentVertex);  // Ensure we can trace the path back to the parent
             }
         }
+
+        // Store the edge of the MST and print the edge
+        if (currentVertex && currentVertex->getParent() && currentVertex->getId() != startId) {
+            mST.push_back({currentVertex->getParent()->getId(), currentVertex->getId()});
+        }
+
+        // Add the edge cost to the total cost
+        totalCost += currentDist;
     }
 
     return totalCost;
 }
+
+
 
 Edge* Graph::getEdge(int sourceId, int destId) const {
     // First, find the source vertex
@@ -143,8 +151,20 @@ double Graph::getDistance(int sourceId, int destId) const {
     return INF; // If there's no edge, return infinity or some large value
 }
 
+Vertex* Graph::getVertex(unsigned id) const {
+    // Iterate through vertices to find the one with the given ID
+    for (const auto& pair : vertexMap) {
+        if (pair.first == id) {
+            return pair.second;
+        }
+    }
+    // If vertex with given ID is not found, return nullptr
+    return nullptr;
+}
+
+
 // Function to calculate Haversine distance between two latitude-longitude points
-double haversine(double lat1, double lon1, double lat2, double lon2) {
+double Graph::haversine(double lat1, double lon1, double lat2, double lon2) const {
     constexpr double R = 6371.0; // Earth radius in kilometers
 
     // Convert latitude and longitude from degrees to radians
@@ -268,16 +288,13 @@ Graph Graph::createExtraFullyConnectedGraph(const std::string& graphFile) {
         if (!sourceVertex) {
             sourceVertex = new Vertex(source);
             graph.addVertex(*sourceVertex);
-            std::cout << "Created new source vertex: " << source << std::endl;
         }
         Vertex *destVertex = graph.findVertex(dest);
         if (!destVertex) {
             destVertex = new Vertex(dest);
             graph.addVertex(*destVertex);
-            std::cout << "Created new destination vertex: " << dest << std::endl;
         }
 
-        std::cout << "Adding edge from " << source << " to " << dest << " with distance " << distance << std::endl;
         sourceVertex->addEdge(destVertex, distance);
         destVertex->addEdge(sourceVertex, distance);
     }
@@ -367,4 +384,36 @@ void Graph::printGraph(const Graph* graph) {
     }
 }
 
+
+void Graph::dfsTree(unsigned startId, std::vector<unsigned>& tree) const {
+    // Clear the previous content of the tree vector
+    tree.clear();
+
+    // Create a set to keep track of visited vertices
+    std::unordered_set<unsigned> visited;
+
+    // Perform DFS traversal
+    dfsHelper(startId, visited, tree);
+}
+
+void Graph::dfsHelper(unsigned currentId, std::unordered_set<unsigned>& visited, std::vector<unsigned>& tree) const {
+    // Mark the current vertex as visited
+    visited.insert(currentId);
+
+    // Add the current vertex to the tree
+    tree.push_back(currentId);
+
+    // Find the current vertex in the map
+    auto it = vertexMap.find(currentId);
+    if (it != vertexMap.end()) {
+        // Iterate over adjacent vertices
+        for (const auto& edge : it->second->getAdj()) {
+            unsigned adjId = edge->getDest()->getId();
+            // If the adjacent vertex is not visited, recursively call DFS on it
+            if (visited.find(adjId) == visited.end()) {
+                dfsHelper(adjId, visited, tree);
+            }
+        }
+    }
+}
 

@@ -89,65 +89,72 @@ double Algorithms::tspBacktracking(const Graph& graph, unsigned currentVertex, u
     return minPathCost;
 }
 
-void Algorithms::triangularApproximationTSP(const Graph& graph, const std::string& graphFile) {
-    auto start = std::chrono::high_resolution_clock::now();
 
-    std::vector<bool> visited(graph.size(), false);
-    std::vector<unsigned> path;
-    double totalCost = 0.0;
-    unsigned current = 0; // Start at node 0
-    path.push_back(current);
-    visited[current] = true;
+void Algorithms::preorderTraversal(int currentId, const std::unordered_map<int, std::vector<int>>& mstAdjList, std::unordered_set<int>& visited, std::vector<int>& path) const {
+    visited.insert(currentId);
+    path.push_back(currentId);
 
-    // Nearest neighbor heuristic
-    for (unsigned i = 1; i < graph.size(); ++i) {
-        double nearestDistance = std::numeric_limits<double>::max();
-        unsigned nearestVertex = 0;
+    auto it = mstAdjList.find(currentId);
+    if (it != mstAdjList.end()) {
+        for (int neighborId : it->second) {
+            if (visited.find(neighborId) == visited.end()) {
+                preorderTraversal(neighborId, mstAdjList, visited, path);
+            }
+        }
+    }
+}
 
-        for (unsigned j = 0; j < graph.size(); ++j) {
-            if (!visited[j]) {
-                double distance = getDistance(graph, current, j);
-                if (distance < nearestDistance) {
-                    nearestDistance = distance;
-                    nearestVertex = j;
-                }
+double Algorithms::tsp2Approximation(int startId, std::vector<int>& tspPath) const {
+    // Get the MST edges
+    std::vector<std::pair<unsigned, unsigned>> mST;
+    double mstCost = graph->mstPrim(startId, mST);
+
+    if (mstCost == 0.0) {
+        std::cerr << "Unable to generate MST or the graph is empty." << std::endl;
+        return 0.0;
+    }
+
+    // Map to store the adjacency list of the MST
+    std::unordered_map<int, std::vector<int>> mstAdjList;
+    for (const auto& edge : mST) {
+        mstAdjList[edge.first].push_back(edge.second);
+        mstAdjList[edge.second].push_back(edge.first);
+    }
+
+    // Preorder traversal of the MST
+    std::unordered_set<int> visited;
+    preorderTraversal(startId, mstAdjList, visited, tspPath);
+
+    // Add the final edge to complete the cycle
+    tspPath.push_back(startId);
+
+    // Calculate the total cost of the TSP path
+    double tspCost = 0.0;
+    for (size_t i = 0; i < tspPath.size() - 1; ++i) {
+        // Find the distance between tspPath[i] and tspPath[i + 1]
+        Vertex* u = nullptr;
+        Vertex* v = nullptr;
+        for (const auto& pair : graph->getVertexMap()) {
+            if (pair.second->getId() == tspPath[i]) {
+                u = pair.second;
+            }
+            if (pair.second->getId() == tspPath[i + 1]) {
+                v = pair.second;
+            }
+            if (u && v) {
+                break;
             }
         }
 
-        if (nearestDistance == std::numeric_limits<double>::max()) {
-            std::cerr << "No valid path found from " << current << std::endl;
-            break; // Break out of the loop if no valid path can be found (isolated node or disconnected graph)
+        if (u && v) {
+            for (Edge* edge : u->getAdj()) {
+                if (edge->getDest()->getId() == v->getId()) {
+                    tspCost += edge->getDistance();
+                    break;
+                }
+            }
         }
-
-        visited[nearestVertex] = true;
-        path.push_back(nearestVertex);
-        totalCost += nearestDistance;
-        current = nearestVertex;
     }
 
-    // Return to the starting node
-    double returnCost = getDistance(graph, current, 0);
-    totalCost += returnCost;
-    path.push_back(0); // Complete the circuit by returning to the start
-
-    auto end = std::chrono::high_resolution_clock::now();
-
-    // Output the results
-    std::cout << "Algorithm: TSP Triangular Approximation" << std::endl;
-    std::cout << "Graph: ";
-    std::string graphName = graphFile.substr(0, graphFile.find_last_of('.'));
-    std::cout << graphName << std::endl;
-    std::cout << "Time: ";
-    std::cout << (end - start) / std::chrono::milliseconds(1) << " ms" << std::endl;
-    std::cout << "Total Cost: ";
-    std::cout << totalCost << std::endl;
-    std::cout << "Path: ";
-
-    for (size_t i = 0; i < path.size(); ++i) {
-        std::cout << std::setfill(' ') << std::left << path[i];
-        if (i != path.size() - 1)
-            std::cout << " -> ";
-    }
-    std::cout << std::endl;
+    return tspCost;
 }
-
