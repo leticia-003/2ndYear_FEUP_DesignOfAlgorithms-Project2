@@ -3,6 +3,7 @@
 #include "Algorithms.h"
 #include <iostream>
 #include <filesystem>
+#include <math.h>
 
 void displayMenu() {
     std::cout << "+-------------------------------------+" << std::endl;
@@ -73,6 +74,8 @@ std::string getDatasetChoice() {
 
         Graph toyGraph = graphHandler.createToyGraphs(graphFiles[graphChoice - 1]);
 
+        Algorithms algo(&toyGraph);
+
         std::cout << std::endl;
         std::cout << "+----------------------------------------+" << std::endl;
         std::cout << "|          Choose an action              |" << std::endl;
@@ -96,7 +99,7 @@ std::string getDatasetChoice() {
                 break;
             case 2:
                 // Perform TSP backtracking
-                //algorithms.backtrackingAlgorithm(toyGraph, graphFiles[graphChoice - 1]);
+                algo.backtrackingAlgorithm(toyGraph, graphFiles[graphChoice - 1]);
                 break;
             case 3: {
                 auto startTime = std::chrono::high_resolution_clock::now();
@@ -121,7 +124,6 @@ std::string getDatasetChoice() {
                     auto startTime = std::chrono::high_resolution_clock::now();
                     int startId = 0;  // Or whichever vertex you want to start from
                     std::vector<int> tspPath;
-                    Algorithms algo(&toyGraph);
                     double tspCost = algo.tsp2Approximation(startId, tspPath);
 
                     std::cout << "TSP Path: ";
@@ -243,7 +245,13 @@ std::string getDatasetChoice() {
                 }
                 std::cout << std::endl;
 
-                std::cout << "Total Cost of TSP Path: " << tspCost << std::endl;
+                if(tspCost>1000000){
+                    double arredondado = round(tspCost / 1000000.0 * 100.0) / 100.0; // Arredonda para duas casas decimais
+                    std::cout << "Total Cost of TSP Path: " << arredondado << "M" << std::endl;
+                }
+                else {
+                    std::cout << "Total Cost of TSP Path: " << tspCost << std::endl;
+                }
 
                 auto endTime = std::chrono::high_resolution_clock::now();
                 auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
@@ -274,7 +282,22 @@ std::string getDatasetChoice() {
             std::cin >> graphChoice;
         } while (graphChoice < 1 || graphChoice > 3);
 
-        Graph* realWorldGraph = graphHandler.buildRealWorldGraph(graphChoice);
+        std::string graphDirectory;
+        switch (graphChoice) {
+            case 1:
+                graphDirectory = "graph1";
+                break;
+            case 2:
+                graphDirectory = "graph2";
+                break;
+            case 3:
+                graphDirectory = "graph3";
+                break;
+        }
+
+        std::string filePath = "../Real-world Graphs/" + graphDirectory + "/edges.csv";
+
+        Graph realWorldGraph = graphHandler.createRealWorldGraphs(filePath);
 
         std::cout << std::endl;
         std::cout << "+----------------------------------------+" << std::endl;
@@ -292,15 +315,54 @@ std::string getDatasetChoice() {
         switch (actionChoice) {
             case 1:
                 // Print the graph
-                graphHandler.printGraph(realWorldGraph);
+                //graphHandler.printGraph(realWorldGraph);
                 break;
             case 2: {
+                auto startTime = std::chrono::high_resolution_clock::now();
                 int startId = 0; // Starting vertex ID is fixed at 0
 
-                //double mstCost = realWorldGraph->mstPrim(startId);
-                //std::cout << "The cost of the Minimum Spanning Tree is: " << mstCost << std::endl;
-                break;
+                // Call mstPrim function
+                std::vector<std::pair<unsigned, unsigned>> mST;
+                double mstCost = realWorldGraph.mstPrim(startId, mST);
+
+                // Output the cost of the Minimum Spanning Tree
+                std::cout << "The cost of the Minimum Spanning Tree is: " << mstCost << std::endl;
+
+                auto endTime = std::chrono::high_resolution_clock::now();
+                auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
+                std::cout << "Time taken: " << duration << " ms" << std::endl;
             }
+            break;
+
+            case 3: {
+                auto startTime = std::chrono::high_resolution_clock::now();
+                int startId = 0;  // Or whichever vertex you want to start from
+                std::vector<int> tspPath;
+                Algorithms algo(&realWorldGraph);
+                double tspCost = algo.tsp2Approximation(startId, tspPath);
+
+                std::cout << "TSP Path: ";
+                for (size_t i = 0; i < tspPath.size(); ++i) {
+                    std::cout << tspPath[i];
+                    if (i < tspPath.size() - 1) {
+                        std::cout << " -> ";
+                    }
+                }
+                std::cout << std::endl;
+
+                if(tspCost>1000000){
+                    double arredondado = round(tspCost / 1000000.0 * 100.0) / 100.0; // Arredonda para duas casas decimais
+                    std::cout << "Total Cost of TSP Path: " << arredondado << "M" << std::endl;
+                }
+                else {
+                    std::cout << "Total Cost of TSP Path: " << tspCost << std::endl;
+                }
+
+                auto endTime = std::chrono::high_resolution_clock::now();
+                auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
+                std::cout << "Time taken: " << duration << " ms" << std::endl;
+            }
+                break;
             default:
                 std::cout << "Invalid choice" << std::endl;
         }

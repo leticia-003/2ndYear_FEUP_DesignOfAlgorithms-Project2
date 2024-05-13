@@ -44,11 +44,7 @@ public:
 
     Graph createExtraFullyConnectedGraph(const std::string& graphFile);
 
-    Graph* buildRealWorldGraph(unsigned number);
-
-    void buildRealWorldGraphEdges(unsigned number, Graph* graph);
-
-    void buildRealWorldGraphNodes(unsigned number, Graph* graph);
+    Graph createRealWorldGraphs(const std::string& graphFile);
 
     unsigned size() const;
 

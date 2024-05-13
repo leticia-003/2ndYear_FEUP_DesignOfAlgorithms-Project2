@@ -257,73 +257,42 @@ Graph Graph::createExtraFullyConnectedGraph(const std::string& graphFile) {
     return graph;
 }
 
-Graph* Graph::buildRealWorldGraph(unsigned number) {
-    auto graph = new Graph;
-    buildRealWorldGraphNodes(number, graph);
-    buildRealWorldGraphEdges(number, graph);
+Graph Graph::createRealWorldGraphs(const std::string& graphFile) {
+    Graph graph; // Create a new graph instance to populate
+
+    std::ifstream infile(graphFile);
+    if (!infile.is_open()) {
+        std::cerr << "Error opening file: " << graphFile << std::endl;
+        exit(1);
+    }
+
+    std::string line;
+    while (std::getline(infile, line)) {
+        std::istringstream iss(line);
+        int source = 0, dest = 0;
+        double distance;
+        char comma;
+        if (!(iss >> source >> comma >> dest >> comma >> distance)) {
+            std::cerr << "Error reading line: " << line << std::endl;
+            continue;
+        }
+
+        Vertex *sourceVertex = graph.findVertex(source);
+        if (!sourceVertex) {
+            sourceVertex = new Vertex(source);
+            graph.addVertex(*sourceVertex);
+        }
+        Vertex *destVertex = graph.findVertex(dest);
+        if (!destVertex) {
+            destVertex = new Vertex(dest);
+            graph.addVertex(*destVertex);
+        }
+
+        sourceVertex->addEdge(destVertex, distance);
+    }
+    infile.close();
+
     return graph;
-}
-
-void Graph::buildRealWorldGraphNodes(unsigned number, Graph* graph) {
-    std::ifstream file("../Real-world Graphs/graph" + std::to_string(number) + "/nodes.csv");
-    if (!file.is_open()) {
-        std::cerr << "Error opening nodes file for graph " << number << std::endl;
-        return;
-    }
-
-    std::string line;
-    getline(file, line); // Skip header
-
-    while (getline(file, line)) {
-        std::string id, latitude, longitude;
-        std::stringstream input(line);
-        getline(input, id, ',');
-        getline(input, longitude, ',');
-        getline(input, latitude, '\r');
-
-        // Create a new vertex
-        Vertex* newVertex = new Vertex(std::stoi(id));
-
-        // Add node to the graph
-        if (!graph->addVertex(*newVertex)) {
-            std::cerr << "Error adding vertex with ID " << id << " to the graph (already exists)" << std::endl;
-            delete newVertex; // Clean up if adding fails
-        }
-    }
-    file.close();
-}
-
-
-
-void Graph::buildRealWorldGraphEdges(unsigned number, Graph* graph) {
-    std::ifstream file("../Real-world Graphs/graph" + std::to_string(number) + "/edges.csv");
-    if (!file.is_open()) {
-        std::cerr << "Error opening edges file for graph " << number << std::endl;
-        return;
-    }
-
-    std::string line;
-    getline(file, line); // Skip header
-
-    while (getline(file, line)) {
-        std::string first, second, distance;
-        std::stringstream input(line);
-        getline(input, first, ',');
-        getline(input, second, ',');
-        getline(input, distance, '\r');
-
-        // Find the vertices in the graph
-        Vertex* firstVertex = graph->findVertex(std::stoi(first));
-        Vertex* secondVertex = graph->findVertex(std::stoi(second));
-
-        // If vertices are found, add the edge
-        if (firstVertex && secondVertex) {
-            firstVertex->addEdge(secondVertex, std::stod(distance));
-        } else {
-            std::cerr << "Error: Vertices not found for edge: " << first << " - " << second << std::endl;
-        }
-    }
-    file.close();
 }
 
 
