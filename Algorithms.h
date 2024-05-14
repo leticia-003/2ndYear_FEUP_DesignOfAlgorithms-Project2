@@ -26,8 +26,6 @@ public:
 
     double tSP2OptImprovement(const Graph& graph, std::vector<int>& path);
 
-    std::pair<double, std::vector<int>> simulatedAnnealing(const Graph& graph, const std::vector<int>& initialTour);
-
     void printTour(const std::vector<int>& tour) const;
 
 private:

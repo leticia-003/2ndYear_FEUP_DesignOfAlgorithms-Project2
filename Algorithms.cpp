@@ -255,50 +255,11 @@ double Algorithms::tSP2OptImprovement(const Graph& graph,std::vector<int>& path)
         }
         if (found) break;
     }
+
+    for(int i : path){
+        cout << i << " -> ";
+    }
     return bestDistance;
-}
-
-
-
-std::pair<double, std::vector<int>> Algorithms::simulatedAnnealing(const Graph& graph, const std::vector<int>& initialTour) {
-    std::vector<int> tour = initialTour;
-    double tourLength = 0.0;
-    int n = tour.size();
-
-    // Compute initial tour length
-    for (int i = 0; i < n - 1; ++i) {
-        tourLength += graph.getDistance(tour[i], tour[i + 1]);
-    }
-    tourLength += graph.getDistance(tour[n - 1], tour[0]); // Return to starting node
-
-    double temperature = 10000;
-    double coolingRate = 0.999;
-
-    while (temperature > 1) {
-        // Create a new tour by swapping two cities
-        std::vector<int> newTour = tour;
-        int i = rand() % (n - 1) + 1;
-        int j = rand() % (n - 1) + 1;
-        std::swap(newTour[i], newTour[j]);
-
-        // Compute new tour length
-        double newTourLength = 0.0;
-        for (int k = 0; k < n - 1; ++k) {
-            newTourLength += graph.getDistance(newTour[k], newTour[k + 1]);
-        }
-        newTourLength += graph.getDistance(newTour[n - 1], newTour[0]); // Return to starting node
-
-        // Decide whether to accept the new tour
-        if (newTourLength < tourLength || exp((tourLength - newTourLength) / temperature) > ((double) rand() / RAND_MAX)) {
-            tour = newTour;
-            tourLength = newTourLength;
-        }
-
-        // Cool down
-        temperature *= coolingRate;
-    }
-
-    return std::make_pair(tourLength, tour);
 }
 
 

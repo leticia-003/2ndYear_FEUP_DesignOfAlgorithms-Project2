@@ -152,19 +152,13 @@ std::string getDatasetChoice() {
                     double nnCost = nnResult.first;
                     std::vector<int> nnTour = nnResult.second;
                     std::cout << "Nearest Neighbor Tour Cost: " << nnCost << std::endl;
-                    std::cout << "Nearest Neighbor Tour: ";
                     algo.printTour(nnTour);
 
-                    // Improve the tour using Simulated Annealing
-                    /*auto improvedResult = algo.simulatedAnnealing(toyGraph, nnTour);
-                    double improvedCost = improvedResult.first;
-                    std::vector<int> improvedTour = improvedResult.second;
-                    std::cout << "Improved Tour Cost (Simulated Annealing): " << improvedCost << std::endl;
-                    std::cout << "Improved Tour (Simulated Annealing): ";
-                    algo.printTour(improvedTour);*/
+                    double TwoOptCost = algo.tSP2OptImprovement(toyGraph, nnTour);
+                    cout << TwoOptCost << std::endl;
 
-                    double resultado = algo.tSP2OptImprovement(toyGraph, nnTour);
-                    cout << resultado;
+                    double percentagem = ((nnCost - TwoOptCost)*100) / nnCost;
+                    cout << "Este resultado é " << percentagem << "% melhor que o anterior.";
 
                 }
             break;
