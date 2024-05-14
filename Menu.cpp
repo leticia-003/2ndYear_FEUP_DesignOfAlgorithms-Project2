@@ -295,9 +295,13 @@ std::string getDatasetChoice() {
                 break;
         }
 
+
+
         std::string filePath = "../Real-world Graphs/" + graphDirectory + "/edges.csv";
 
         Graph realWorldGraph = graphHandler.createRealWorldGraphs(filePath);
+
+        graphHandler.parseNodesFile(graphDirectory, realWorldGraph);
 
         std::cout << std::endl;
         std::cout << "+----------------------------------------+" << std::endl;
@@ -309,7 +313,7 @@ std::string getDatasetChoice() {
         std::cout << "+----------------------------------------+" << std::endl;
 
         int actionChoice;
-        std::cout << "Enter your choice (1 or 2): ";
+        std::cout << "Enter your choice (1, 2 or 3): ";
         std::cin >> actionChoice;
 
         switch (actionChoice) {

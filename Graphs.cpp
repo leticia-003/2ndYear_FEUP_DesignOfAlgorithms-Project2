@@ -47,17 +47,69 @@ std::vector<Edge*> Graph::getEdges(int sourceId) const {
     return sourceVertex->getAdj();
 }
 
-
-// Compare structure for priority queue
-struct Compare {
-    bool operator()(std::pair<double, Vertex*> const& p1, std::pair<double, Vertex*> const& p2) {
-        return p1.first > p2.first; // Min-heap based on edge distance
+double Graph::getDistanceOrHaversine(int sourceId, int destId) const {
+    // First try to get the direct distance
+    double directDistance = getDistance(sourceId, destId);
+    if (directDistance != INF) {
+        return directDistance;
     }
-};
 
+    // If no direct edge exists, calculate Haversine distance
+    Vertex* sourceVertex = findVertex(sourceId);
+    Vertex* destVertex = findVertex(destId);
+    if (sourceVertex && destVertex) {
+        return haversine(sourceVertex->getLatitude(), sourceVertex->getLongitude(),
+                         destVertex->getLatitude(), destVertex->getLongitude());
+    }
+
+    return INF; // If either vertex is not found, return infinity
+}
+
+bool Graph::parseNodesFile(const std::string& graphDirectory, Graph& graph) {
+    std::string filePath = "../Real-world Graphs/" + graphDirectory + "/nodes.csv";
+    std::ifstream infile(filePath);
+    if (!infile.is_open()) {
+        std::cerr << "Error opening file: " << filePath << std::endl;
+        return false;
+    }
+
+    std::string line;
+    bool firstLine = true;
+
+    while (std::getline(infile, line)) {
+        if (firstLine) {
+            firstLine = false;
+            continue; // Skip the header line
+        }
+
+        std::istringstream iss(line);
+        unsigned id;
+        double longitude, latitude;
+        char comma;
+
+        if (!(iss >> id >> comma >> longitude >> comma >> latitude)) {
+            std::cerr << "Error reading line: " << line << std::endl;
+            continue; // Skip invalid lines
+        }
+
+        Vertex* vertex = graph.findVertex(id);
+        if (!vertex) {
+            vertex = new Vertex(id);
+            graph.addVertex(*vertex);
+        }
+
+        vertex->setLatitude(latitude);
+        vertex->setLongitude(longitude);
+    }
+
+    infile.close();
+    return true;
+}
 
 double Graph::mstPrim(int startId, std::vector<std::pair<unsigned, unsigned>>& mST) const {
-    std::priority_queue<std::pair<double, std::pair<unsigned, unsigned>>, std::vector<std::pair<double, std::pair<unsigned, unsigned>>>, std::greater<std::pair<double, std::pair<unsigned, unsigned>>>> pq;
+    std::priority_queue<std::pair<double, std::pair<unsigned, unsigned>>,
+            std::vector<std::pair<double, std::pair<unsigned, unsigned>>>,
+            std::greater<std::pair<double, std::pair<unsigned, unsigned>>>> pq;
     std::unordered_set<unsigned> visited;
     mST.clear();
 
@@ -68,8 +120,9 @@ double Graph::mstPrim(int startId, std::vector<std::pair<unsigned, unsigned>>& m
     visited.insert(startId);
 
     double totalCost = 0.0;
+    unsigned numVertices = vertexSet.size();
 
-    while (!pq.empty()) {
+    while (!pq.empty() && visited.size() < numVertices) {
         auto [cost, edge] = pq.top();
         pq.pop();
         unsigned src = edge.first;
@@ -91,10 +144,22 @@ double Graph::mstPrim(int startId, std::vector<std::pair<unsigned, unsigned>>& m
                 pq.push({adjEdge->getDistance(), {dest, adjDest}});
             }
         }
+
+        // Also consider all non-adjacent vertices for potential edges
+        for (auto vertex : vertexSet) {
+            unsigned vertexId = vertex->getId();
+            if (visited.find(vertexId) == visited.end()) {
+                double dist = getDistanceOrHaversine(dest, vertexId);
+                if (dist != INF) {
+                    pq.push({dist, {dest, vertexId}});
+                }
+            }
+        }
     }
 
     return totalCost;
 }
+
 
 
 Edge* Graph::getEdge(int sourceId, int destId) const {
@@ -273,7 +338,6 @@ Graph Graph::createRealWorldGraphs(const std::string& graphFile) {
         double distance;
         char comma;
         if (!(iss >> source >> comma >> dest >> comma >> distance)) {
-            std::cerr << "Error reading line: " << line << std::endl;
             continue;
         }
 

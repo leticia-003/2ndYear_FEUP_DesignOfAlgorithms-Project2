@@ -38,6 +38,10 @@ public:
 
     double getLongitude() const;
 
+    void setLatitude(double lat);
+
+    void setLongitude(double lon);
+
 protected:
     int id;
 

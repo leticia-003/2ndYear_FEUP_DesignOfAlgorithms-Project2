@@ -24,7 +24,11 @@ public:
 
     Vertex* getVertex(unsigned id) const;
 
+    double getDistanceOrHaversine(int sourceId, int destId) const;
+
     std::vector<Edge*> getEdges(int sourceId) const;
+
+    bool parseNodesFile(const std::string& graphDirectory, Graph& graph);
 
     double mstPrim(int startId, std::vector<std::pair<unsigned, unsigned>>& mST) const;
 

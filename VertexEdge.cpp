@@ -25,6 +25,14 @@ double Vertex::getLongitude() const {
     return longitude;
 }
 
+void Vertex::setLatitude(double lat) {
+    latitude = lat;
+}
+
+void Vertex::setLongitude(double lon) {
+    longitude = lon;
+}
+
 Edge * Vertex::addEdge(Vertex* dest, double distance) {
     Edge* edge = new Edge(this, dest, distance);
     adj.push_back(edge);
