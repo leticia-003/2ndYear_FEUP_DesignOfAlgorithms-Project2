@@ -22,6 +22,8 @@ public:
     void dfsTraversal(int u, int parent, const std::vector<std::vector<int>>& adjList,
                                   std::vector<bool>& visited, std::vector<int>& tspPath) const;
 
+    std::pair<double, std::vector<int>> nearestNeighbor(const Graph& graph, int startNode);
+
 private:
     const Graph* graph;
 };

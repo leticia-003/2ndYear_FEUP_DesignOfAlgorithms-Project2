@@ -84,6 +84,7 @@ std::string getDatasetChoice() {
         std::cout << "|  2. TSP Backtracking                   |" << std::endl;
         std::cout << "|  3. MST Prim                           |" << std::endl;
         std::cout << "|  4. Triangular Approximation Heuristic |" << std::endl;
+        std::cout << "|  5. Nearest Neighbor Heuristic         |" << std::endl;
         std::cout << "+----------------------------------------+" << std::endl;
 
         int actionChoice;
@@ -142,6 +143,17 @@ std::string getDatasetChoice() {
                 }
                 break;
 
+            case 5:
+
+                if (graphChoice == 3) {
+                    std::cout << "The graph is not fully connected. Unable to apply the Triangular Approximation Heuristic." << std::endl;
+                } else {
+                    auto nnResult = algo.nearestNeighbor(toyGraph, 0);
+                    double nnCost = nnResult.first;
+                    std::vector<int> nnTour = nnResult.second;
+                    std::cout << "Nearest Neighbor Tour Cost: " << nnCost << std::endl;
+                }
+            break;
 
             default:
                 std::cout << "Invalid choice" << std::endl;

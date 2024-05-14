@@ -173,3 +173,38 @@ void Algorithms::dfsTraversal(int u, int parent, const std::vector<std::vector<i
         }
     }
 }
+
+std::pair<double, std::vector<int>> Algorithms::nearestNeighbor(const Graph& graph, int startNode) {
+    std::vector<int> tour;
+    double totalDistance = 0.0;
+    int numNodes = graph.getVertices().size(); // Implement numNodes() method in your Graph class
+
+    std::vector<bool> visited(numNodes, false);
+    int current = startNode;
+    visited[current] = true;
+    tour.push_back(current);
+
+    for (int i = 0; i < numNodes - 1; ++i) {
+        int nearestNeighbor = -1;
+        double minDistance = std::numeric_limits<double>::max();
+        for (int j = 0; j < numNodes; ++j) {
+            if (!visited[j]) {
+                double distance = graph.getDistance(current, j); // Implement getDistance() method in your Graph class
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    nearestNeighbor = j;
+                }
+            }
+        }
+        totalDistance += minDistance;
+        current = nearestNeighbor;
+        visited[current] = true;
+        tour.push_back(current);
+    }
+
+    // Return to the starting node
+    totalDistance += graph.getDistance(current, startNode); // Implement getDistance() method
+    tour.push_back(startNode);
+
+    return make_pair(totalDistance, tour);
+}
