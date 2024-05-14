@@ -256,16 +256,23 @@ double Algorithms::tSP2OptImprovement(const Graph& graph,std::vector<int>& path)
         if (found) break;
     }
 
-    for(int i : path){
-        cout << i << " -> ";
+    std::cout << "2-OPT Tour: ";
+
+    for (int i = 0; i < path.size() - 1; i++) {
+        std::cout << path[i] << " -> ";
     }
+    std::cout << path.back(); // Print the last node without the arrow
+    std::cout << std::endl;
+
     return bestDistance;
 }
 
 
 void Algorithms::printTour(const std::vector<int>& tour) const {
-    for (int node : tour) {
-        std::cout << node << " ";
+    for (size_t i = 0; i < tour.size(); ++i) {
+        std::cout << tour[i];
+        if (i != tour.size() - 1) // If not the last node
+            std::cout << " -> ";
     }
     std::cout << std::endl;
 }

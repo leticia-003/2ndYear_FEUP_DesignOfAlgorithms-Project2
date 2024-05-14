@@ -83,7 +83,7 @@ std::string getDatasetChoice() {
         std::cout << "|  2. TSP Backtracking                   |" << std::endl;
         std::cout << "|  3. MST Prim                           |" << std::endl;
         std::cout << "|  4. Triangular Approximation Heuristic |" << std::endl;
-        std::cout << "|  5. Nearest Neighbor Heuristic         |" << std::endl;
+        std::cout << "|  5. Nearest Neighbor/ 2-OPT Heuristic  |" << std::endl;
         std::cout << "+----------------------------------------+" << std::endl;
 
         int actionChoice;
@@ -143,7 +143,6 @@ std::string getDatasetChoice() {
                 break;
 
             case 5:
-
                 if (graphChoice == 3) {
                     std::cout << "The graph is not fully connected. Unable to apply the Triangular Approximation Heuristic." << std::endl;
                 } else {
@@ -151,17 +150,25 @@ std::string getDatasetChoice() {
                     auto nnResult = algo.nearestNeighbor(toyGraph, startNode);
                     double nnCost = nnResult.first;
                     std::vector<int> nnTour = nnResult.second;
-                    std::cout << "Nearest Neighbor Tour Cost: " << nnCost << std::endl;
+
+                    std::cout << std::endl;
+                    std::cout << "+----------------------------------------+" << std::endl;
+                    std::cout << "|    Nearest Neighbor/2-OPT Heuristic    |" << std::endl;
+                    std::cout << "+----------------------------------------+" << std::endl;
+                    std::cout << "Nearest Neighbor Tour: ";
                     algo.printTour(nnTour);
+                    std::cout << "Nearest Neighbor Tour Cost: " << nnCost << std::endl;
+                    std::cout << "+----------------------------------------+" << std::endl;
 
                     double TwoOptCost = algo.tSP2OptImprovement(toyGraph, nnTour);
-                    cout << TwoOptCost << std::endl;
+                    std::cout << "2-OPT Tour Cost: " << TwoOptCost << std::endl;
+                    std::cout << "+----------------------------------------+" << std::endl;
 
-                    double percentagem = ((nnCost - TwoOptCost)*100) / nnCost;
-                    cout << "Este resultado é " << percentagem << "% melhor que o anterior.";
-
+                    double percentage = round(((nnCost - TwoOptCost) * 100) / nnCost);
+                    std::cout << "|    Improvement Percentage:    " << percentage << "%       |" << std::endl;
+                    std::cout << "+----------------------------------------+" << std::endl;
                 }
-            break;
+                break;
 
             default:
                 std::cout << "Invalid choice" << std::endl;
@@ -213,6 +220,8 @@ std::string getDatasetChoice() {
 
         Graph fullyConnectedGraphs = graphHandler.createExtraFullyConnectedGraph(filePath);
 
+        Algorithms algo(&fullyConnectedGraphs);
+
         std::cout << std::endl;
         std::cout << "+----------------------------------------+" << std::endl;
         std::cout << "|          Choose an action              |" << std::endl;
@@ -220,10 +229,11 @@ std::string getDatasetChoice() {
         std::cout << "|  1. Print the graph                    |" << std::endl;
         std::cout << "|  2. MST Prim                           |" << std::endl;
         std::cout << "|  3. Triangular Approximation Heuristic |" << std::endl;
+        std::cout << "|  4. Nearest Neighbor/ 2-OPT Heuristic  |" << std::endl;
         std::cout << "+----------------------------------------+" << std::endl;
 
         int actionChoice;
-        std::cout << "Enter your choice (1, 2 or 3): ";
+        std::cout << "Enter your choice (1, 2, 3 or 4): ";
         std::cin >> actionChoice;
 
         std::vector<int> bestPath;
@@ -279,6 +289,24 @@ std::string getDatasetChoice() {
             }
             break;
 
+            case 4:
+            {
+                int startNode = 0;
+                auto nnResult = algo.nearestNeighbor(fullyConnectedGraphs, startNode);
+                double nnCost = nnResult.first;
+                std::vector<int> nnTour = nnResult.second;
+                std::cout << "Nearest Neighbor Tour Cost: " << nnCost << std::endl;
+                algo.printTour(nnTour);
+
+                double TwoOptCost = algo.tSP2OptImprovement(fullyConnectedGraphs, nnTour);
+                cout << TwoOptCost << std::endl;
+
+                double percentagem = ((nnCost - TwoOptCost)*100) / nnCost;
+                cout << "Este resultado é " << percentagem << "% melhor que o anterior.";
+
+                }
+                break;
+
             default:
                 std::cout << "Invalid choice" << std::endl;
         }
@@ -330,10 +358,11 @@ std::string getDatasetChoice() {
         std::cout << "|  1. Print the graph                    |" << std::endl;
         std::cout << "|  2. MST                                |" << std::endl;
         std::cout << "|  3. Triangular Approximation Heuristic |" << std::endl;
+        std::cout << "|  4. Nearest Neighbor/ 2-OPT Heuristic  |" << std::endl;
         std::cout << "+----------------------------------------+" << std::endl;
 
         int actionChoice;
-        std::cout << "Enter your choice (1, 2 or 3): ";
+        std::cout << "Enter your choice (1, 2, 3 or 4): ";
         std::cin >> actionChoice;
 
         switch (actionChoice) {
