@@ -114,16 +114,21 @@ double Algorithms::tsp2Approximation(int startId, std::vector<int>& tspPath) con
         return 0.0;
     }
 
-    // Map to store the adjacency list of the MST
-    std::unordered_map<int, std::vector<int>> mstAdjList;
+    // Determine the size of the graph to initialize the adjacency list
+    int numVertices = graph->getVertices().size();
+
+    // Vector to store the adjacency list of the MST
+    std::vector<std::vector<int>> mstAdjList(numVertices);
     for (const auto& edge : mST) {
         mstAdjList[edge.first].push_back(edge.second);
         mstAdjList[edge.second].push_back(edge.first);
     }
 
+    // Vector to store visited nodes
+    std::vector<bool> visited(numVertices, false);
+
     // Traverse the MST to generate the TSP path
-    std::unordered_set<int> visited;
-    dfsTraversal(startId, startId, mstAdjList, visited, tspPath);
+    dfsTraversal(startId, -1, mstAdjList, visited, tspPath);
 
     // Add the distance from the last vertex back to the starting vertex
     tspPath.push_back(startId);
@@ -152,20 +157,19 @@ double Algorithms::tsp2Approximation(int startId, std::vector<int>& tspPath) con
     return tspCost;
 }
 
-void Algorithms::dfsTraversal(int u, int parent, const std::unordered_map<int, std::vector<int>>& adjList,
-                              std::unordered_set<int>& visited, std::vector<int>& tspPath) const {
-    visited.insert(u);
+
+void Algorithms::dfsTraversal(int u, int parent, const std::vector<std::vector<int>>& adjList,
+                              std::vector<bool>& visited, std::vector<int>& tspPath) const {
+    visited[u] = true;
     tspPath.push_back(u);
 
-    // Sort the adjacent vertices in increasing order of their IDs
-    std::vector<int> sortedAdj = adjList.at(u);
-    std::sort(sortedAdj.begin(), sortedAdj.end());
+    // Get the adjacent vertices
+    std::vector<int> sortedAdj = adjList[u];
 
-    // Visit the adjacent vertices in the sorted order
+    // Visit the adjacent vertices
     for (int v : sortedAdj) {
-        if (v != parent && visited.find(v) == visited.end()) {
+        if (v != parent && !visited[v]) {
             dfsTraversal(v, u, adjList, visited, tspPath);
         }
     }
 }
-

@@ -19,8 +19,8 @@ public:
     double tsp2Approximation(int startId, std::vector<int>& tspPath) const;
     void preorderTraversal(int currentId, const std::unordered_map<int, std::vector<int>>& mstAdjList, std::unordered_set<int>& visited, std::vector<int>& path) const;
 
-    void dfsTraversal(int u, int parent, const std::unordered_map<int, std::vector<int>>& adjList,
-                                  std::unordered_set<int>& visited, std::vector<int>& tspPath) const;
+    void dfsTraversal(int u, int parent, const std::vector<std::vector<int>>& adjList,
+                                  std::vector<bool>& visited, std::vector<int>& tspPath) const;
 
 private:
     const Graph* graph;

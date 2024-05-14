@@ -353,6 +353,7 @@ Graph Graph::createRealWorldGraphs(const std::string& graphFile) {
         }
 
         sourceVertex->addEdge(destVertex, distance);
+        destVertex->addEdge(sourceVertex, distance);
     }
     infile.close();
 
