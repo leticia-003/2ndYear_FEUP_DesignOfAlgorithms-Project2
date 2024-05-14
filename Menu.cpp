@@ -145,29 +145,42 @@ std::string getDatasetChoice() {
             case 5:
                 if (graphChoice == 3) {
                     std::cout << "The graph is not fully connected. Unable to apply the Triangular Approximation Heuristic." << std::endl;
-                } else {
-                    int startNode = 0;
-                    auto nnResult = algo.nearestNeighbor(toyGraph, startNode);
-                    double nnCost = nnResult.first;
-                    std::vector<int> nnTour = nnResult.second;
-
-                    std::cout << std::endl;
-                    std::cout << "+----------------------------------------+" << std::endl;
-                    std::cout << "|    Nearest Neighbor/2-OPT Heuristic    |" << std::endl;
-                    std::cout << "+----------------------------------------+" << std::endl;
-                    std::cout << "Nearest Neighbor Tour: ";
-                    algo.printTour(nnTour);
-                    std::cout << "Nearest Neighbor Tour Cost: " << nnCost << std::endl;
-                    std::cout << "+----------------------------------------+" << std::endl;
-
-                    double TwoOptCost = algo.tSP2OptImprovement(toyGraph, nnTour);
-                    std::cout << "2-OPT Tour Cost: " << TwoOptCost << std::endl;
-                    std::cout << "+----------------------------------------+" << std::endl;
-
-                    double percentage = round(((nnCost - TwoOptCost) * 100) / nnCost);
-                    std::cout << "|    Improvement Percentage:    " << percentage << "%       |" << std::endl;
-                    std::cout << "+----------------------------------------+" << std::endl;
                 }
+                else {
+                int startNode = 0;
+                auto startTimeNN = std::chrono::high_resolution_clock::now();
+                auto nnResult = algo.nearestNeighbor(toyGraph, startNode);
+                auto endTimeNN = std::chrono::high_resolution_clock::now();
+                auto durationNN = std::chrono::duration_cast<std::chrono::milliseconds>(endTimeNN - startTimeNN).count();
+
+                double nnCost = nnResult.first;
+                std::vector<int> nnTour = nnResult.second;
+
+                std::cout << std::endl;
+                std::cout << "+----------------------------------------+" << std::endl;
+                std::cout << "|    Nearest Neighbor/2-OPT Heuristic    |" << std::endl;
+                std::cout << "+----------------------------------------+" << std::endl;
+                std::cout << "| Nearest Neighbor Tour: ";
+                algo.printTour(nnTour);
+                std::cout << "| Nearest Neighbor Tour Cost: " << nnCost << std::endl;
+                std::cout << "| Time taken: " << durationNN << " ms" << std::endl;
+                std::cout << std::endl;
+                std::cout << "+----------------------------------------+" << std::endl;
+                std::cout << std::endl;
+
+                auto startTime2OPT = std::chrono::high_resolution_clock::now();
+                double TwoOptCost = algo.tSP2OptImprovement(toyGraph, nnTour);
+                auto endTime2OPT = std::chrono::high_resolution_clock::now();
+                auto duration2OPT = std::chrono::duration_cast<std::chrono::milliseconds>(endTime2OPT - startTime2OPT).count();
+                std::cout << "| 2-OPT Tour Cost: " << TwoOptCost << std::endl;
+                std::cout << "| Time taken: " << duration2OPT << " ms" << std::endl;
+                std::cout << std::endl;
+                std::cout << "+----------------------------------------+" << std::endl;
+
+                double percentage = round(((nnCost - TwoOptCost) * 100) / nnCost);
+                std::cout << "|    Improvement Percentage:    " << percentage << "%       |" << std::endl;
+                std::cout << "+----------------------------------------+" << std::endl;
+            }
                 break;
 
             default:
@@ -292,19 +305,55 @@ std::string getDatasetChoice() {
             case 4:
             {
                 int startNode = 0;
+                auto startTimeNN = std::chrono::high_resolution_clock::now();
                 auto nnResult = algo.nearestNeighbor(fullyConnectedGraphs, startNode);
+                auto endTimeNN = std::chrono::high_resolution_clock::now();
+                auto durationNN = std::chrono::duration_cast<std::chrono::milliseconds>(endTimeNN - startTimeNN).count();
+
                 double nnCost = nnResult.first;
                 std::vector<int> nnTour = nnResult.second;
-                std::cout << "Nearest Neighbor Tour Cost: " << nnCost << std::endl;
+
+                std::cout << std::endl;
+                std::cout << "+----------------------------------------+" << std::endl;
+                std::cout << "|    Nearest Neighbor/2-OPT Heuristic    |" << std::endl;
+                std::cout << "+----------------------------------------+" << std::endl;
+                std::cout << "| Nearest Neighbor Tour: ";
                 algo.printTour(nnTour);
 
-                double TwoOptCost = algo.tSP2OptImprovement(fullyConnectedGraphs, nnTour);
-                cout << TwoOptCost << std::endl;
-
-                double percentagem = ((nnCost - TwoOptCost)*100) / nnCost;
-                cout << "Este resultado é " << percentagem << "% melhor que o anterior.";
-
+                if(nnCost>1000000){
+                    double arredondado = round(nnCost / 1000000.0 * 100.0) / 100.0; // Arredonda para duas casas decimais
+                    std::cout << "| Nearest Neighbor Tour Cost: " << arredondado << " M" << std::endl;
                 }
+                else {
+                    std::cout << "| Nearest Neighbor Tour Cost: " << nnCost << std::endl;
+                }
+
+                std::cout << "| Time taken: " << durationNN << " ms" << std::endl;
+                std::cout << std::endl;
+                std::cout << "+----------------------------------------+" << std::endl;
+                std::cout << std::endl;
+
+                auto startTime2OPT = std::chrono::high_resolution_clock::now();
+                double TwoOptCost = algo.tSP2OptImprovement(fullyConnectedGraphs, nnTour);
+                auto endTime2OPT = std::chrono::high_resolution_clock::now();
+                auto duration2OPT = std::chrono::duration_cast<std::chrono::milliseconds>(endTime2OPT - startTime2OPT).count();
+
+                if(TwoOptCost>1000000){
+                    double arredondado = round(TwoOptCost / 1000000.0 * 100.0) / 100.0; // Arredonda para duas casas decimais
+                    std::cout << "| 2-OPT Tour Cost: " << arredondado << " M" << std::endl;
+                }
+                else {
+                    std::cout << "| 2-OPT Tour Cost: " << TwoOptCost << std::endl;
+                }
+
+                std::cout << "| Time taken: " << duration2OPT << " ms" << std::endl;
+                std::cout << std::endl;
+                std::cout << "+----------------------------------------+" << std::endl;
+
+                double percentage = round(((nnCost - TwoOptCost) * 100) / nnCost);
+                std::cout << "|    Improvement Percentage:    " << percentage << "%       |" << std::endl;
+                std::cout << "+----------------------------------------+" << std::endl;
+            }
                 break;
 
             default:
@@ -349,7 +398,9 @@ std::string getDatasetChoice() {
 
         Graph realWorldGraph = graphHandler.createRealWorldGraphs(filePath);
 
-        graphHandler.parseNodesFile(graphDirectory, realWorldGraph);
+        Algorithms algo(&realWorldGraph);
+
+        //graphHandler.parseNodesFile(graphDirectory, realWorldGraph);
 
         std::cout << std::endl;
         std::cout << "+----------------------------------------+" << std::endl;
@@ -391,7 +442,6 @@ std::string getDatasetChoice() {
                 auto startTime = std::chrono::high_resolution_clock::now();
                 int startId = 0;  // Or whichever vertex you want to start from
                 std::vector<int> tspPath;
-                Algorithms algo(&realWorldGraph);
                 double tspCost = algo.tsp2Approximation(startId, tspPath);
 
                 std::cout << "TSP Path: ";
@@ -416,6 +466,62 @@ std::string getDatasetChoice() {
                 std::cout << "Time taken: " << duration << " ms" << std::endl;
             }
                 break;
+
+            case 4:
+            {
+                int startNode = 0;
+                auto startTimeNN = std::chrono::high_resolution_clock::now();
+                auto nnResult = algo.nearestNeighbor(realWorldGraph, startNode);
+                auto endTimeNN = std::chrono::high_resolution_clock::now();
+                auto durationNN = std::chrono::duration_cast<std::chrono::milliseconds>(endTimeNN - startTimeNN).count();
+
+                double nnCost = nnResult.first;
+                std::vector<int> nnTour = nnResult.second;
+
+                std::cout << std::endl;
+                std::cout << "+----------------------------------------+" << std::endl;
+                std::cout << "|    Nearest Neighbor/2-OPT Heuristic    |" << std::endl;
+                std::cout << "+----------------------------------------+" << std::endl;
+                std::cout << "| Nearest Neighbor Tour: ";
+                algo.printTour(nnTour);
+
+                if(nnCost>1000000){
+                    double arredondado = round(nnCost / 1000000.0 * 100.0) / 100.0; // Arredonda para duas casas decimais
+                    std::cout << "| Nearest Neighbor Tour Cost: " << arredondado << " M" << std::endl;
+                }
+                else {
+                    std::cout << "| Nearest Neighbor Tour Cost: " << nnCost << std::endl;
+                }
+
+                std::cout << "| Time taken: " << durationNN << " ms" << std::endl;
+                std::cout << std::endl;
+                std::cout << "+----------------------------------------+" << std::endl;
+                std::cout << std::endl;
+
+                auto startTime2OPT = std::chrono::high_resolution_clock::now();
+                double TwoOptCost = algo.tSP2OptImprovement(realWorldGraph, nnTour);
+                auto endTime2OPT = std::chrono::high_resolution_clock::now();
+                auto duration2OPT = std::chrono::duration_cast<std::chrono::milliseconds>(endTime2OPT - startTime2OPT).count();
+
+                if(TwoOptCost>1000000){
+                    double arredondado = round(TwoOptCost / 1000000.0 * 100.0) / 100.0; // Arredonda para duas casas decimais
+                    std::cout << "| 2-OPT Tour Cost: " << arredondado << " M" << std::endl;
+                }
+                else {
+                    std::cout << "| 2-OPT Tour Cost: " << TwoOptCost << std::endl;
+                }
+
+                std::cout << "| Time taken: " << duration2OPT << " ms" << std::endl;
+                std::cout << std::endl;
+                std::cout << "+----------------------------------------+" << std::endl;
+
+                double percentage = round(((nnCost - TwoOptCost) * 100) / nnCost);
+                std::cout << "|    Improvement Percentage:    " << percentage << "%       |" << std::endl;
+                std::cout << "+----------------------------------------+" << std::endl;
+            }
+                break;
+
+
             default:
                 std::cout << "Invalid choice" << std::endl;
         }

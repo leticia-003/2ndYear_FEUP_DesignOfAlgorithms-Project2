@@ -256,7 +256,7 @@ double Algorithms::tSP2OptImprovement(const Graph& graph,std::vector<int>& path)
         if (found) break;
     }
 
-    std::cout << "2-OPT Tour: ";
+    std::cout << "| 2-OPT Tour: ";
 
     for (int i = 0; i < path.size() - 1; i++) {
         std::cout << path[i] << " -> ";
