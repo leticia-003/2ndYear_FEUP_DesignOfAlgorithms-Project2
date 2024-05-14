@@ -9,7 +9,7 @@
 #include <iomanip>
 using namespace std;
 
-void Algorithms::backtrackingAlgorithm(const Graph& graph, const std::string& graphFile) {
+void Algorithms::backtrackingAlgorithm(const Graph& graph, const std::string& graphFile) const {
     std::vector<unsigned> path, bestPath;
     auto start = std::chrono::high_resolution_clock::now();
     std::vector<bool> visited(graph.size(), false);
@@ -37,7 +37,7 @@ void Algorithms::backtrackingAlgorithm(const Graph& graph, const std::string& gr
 }
 
 
-double Algorithms::getDistance(const Graph& graph, int sourceId, int destId) const {
+double Algorithms::getDistance(const Graph& graph, int sourceId, int destId){
     Vertex* sourceVertex = graph.findVertex(sourceId);
     Vertex* destVertex = graph.findVertex(destId);
     if (sourceVertex && destVertex) {
@@ -268,7 +268,7 @@ double Algorithms::tSP2OptImprovement(const Graph& graph,std::vector<int>& path)
 }
 
 
-void Algorithms::printTour(const std::vector<int>& tour) const {
+void Algorithms::printTour(const std::vector<int>& tour) {
     for (size_t i = 0; i < tour.size(); ++i) {
         std::cout << tour[i];
         if (i != tour.size() - 1) // If not the last node

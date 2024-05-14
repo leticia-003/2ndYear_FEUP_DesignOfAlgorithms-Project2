@@ -276,7 +276,6 @@ std::string getDatasetChoice() {
                 auto startTime = std::chrono::high_resolution_clock::now();
                 int startId = 0;  // Or whichever vertex you want to start from
                 std::vector<int> tspPath;
-                Algorithms algo(&fullyConnectedGraphs);
                 double tspCost = algo.tsp2Approximation(startId, tspPath);
 
                 std::cout << "TSP Path: ";
@@ -400,8 +399,6 @@ std::string getDatasetChoice() {
 
         Algorithms algo(&realWorldGraph);
 
-        //graphHandler.parseNodesFile(graphDirectory, realWorldGraph);
-
         std::cout << std::endl;
         std::cout << "+----------------------------------------+" << std::endl;
         std::cout << "|          Choose an action              |" << std::endl;
@@ -469,6 +466,7 @@ std::string getDatasetChoice() {
 
             case 4:
             {
+                graphHandler.parseNodesFile(graphDirectory, realWorldGraph);
                 int startNode = 0;
                 auto startTimeNN = std::chrono::high_resolution_clock::now();
                 auto nnResult = algo.nearestNeighbor(realWorldGraph, startNode);

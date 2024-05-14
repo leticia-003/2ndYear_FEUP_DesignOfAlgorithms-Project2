@@ -12,21 +12,24 @@ using namespace std;
 class Algorithms {
 public:
     Algorithms(const Graph* g) : graph(g) {}
-    void backtrackingAlgorithm(const Graph& graph, const std::string& graphFile);
-    double getDistance(const Graph& graph, int sourceId, int destId) const;
+    void backtrackingAlgorithm(const Graph& graph, const std::string& graphFile) const;
+
+    static double getDistance(const Graph& graph, int sourceId, int destId);
+
     double tspBacktracking(const Graph& graph, unsigned currentVertex, unsigned count, std::vector<unsigned>& currentPath, std::vector<bool>& visited, double currentCost, double& minCost, std::vector<unsigned>& bestPath) const;
 
     double tsp2Approximation(int startId, std::vector<int>& tspPath) const;
+
     void preorderTraversal(int currentId, const std::unordered_map<int, std::vector<int>>& mstAdjList, std::unordered_set<int>& visited, std::vector<int>& path) const;
 
     void dfsTraversal(int u, int parent, const std::vector<std::vector<int>>& adjList,
                                   std::vector<bool>& visited, std::vector<int>& tspPath) const;
 
-    std::pair<double, std::vector<int>> nearestNeighbor(const Graph& graph, int startNode);
+    static std::pair<double, std::vector<int>> nearestNeighbor(const Graph& graph, int startNode);
 
-    double tSP2OptImprovement(const Graph& graph, std::vector<int>& path);
+    static double tSP2OptImprovement(const Graph& graph, std::vector<int>& path);
 
-    void printTour(const std::vector<int>& tour) const;
+    static void printTour(const std::vector<int>& tour);
 
 private:
     const Graph* graph;
