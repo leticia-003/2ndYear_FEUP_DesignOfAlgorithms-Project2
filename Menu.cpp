@@ -23,7 +23,6 @@ std::string getDatasetChoice() {
 
     while (true) {
         displayMenu();
-        std::cout << "Enter your choice (1, 2, or 3): ";
         std::cin >> choice;
 
         switch (choice) {
@@ -88,7 +87,7 @@ std::string getDatasetChoice() {
         std::cout << "+----------------------------------------+" << std::endl;
 
         int actionChoice;
-        std::cout << "Enter your choice (1, 2, 3 or 4): ";
+        std::cout << "Enter your choice (1, 2, 3, 4 or 5): ";
         std::cin >> actionChoice;
 
         std::vector<int> bestPath;
@@ -148,10 +147,25 @@ std::string getDatasetChoice() {
                 if (graphChoice == 3) {
                     std::cout << "The graph is not fully connected. Unable to apply the Triangular Approximation Heuristic." << std::endl;
                 } else {
-                    auto nnResult = algo.nearestNeighbor(toyGraph, 0);
+                    int startNode = 0;
+                    auto nnResult = algo.nearestNeighbor(toyGraph, startNode);
                     double nnCost = nnResult.first;
                     std::vector<int> nnTour = nnResult.second;
                     std::cout << "Nearest Neighbor Tour Cost: " << nnCost << std::endl;
+                    std::cout << "Nearest Neighbor Tour: ";
+                    algo.printTour(nnTour);
+
+                    // Improve the tour using Simulated Annealing
+                    /*auto improvedResult = algo.simulatedAnnealing(toyGraph, nnTour);
+                    double improvedCost = improvedResult.first;
+                    std::vector<int> improvedTour = improvedResult.second;
+                    std::cout << "Improved Tour Cost (Simulated Annealing): " << improvedCost << std::endl;
+                    std::cout << "Improved Tour (Simulated Annealing): ";
+                    algo.printTour(improvedTour);*/
+
+                    double resultado = toyGraph.tSP2OptImprovement(nnTour);
+                    cout << resultado;
+
                 }
             break;
 

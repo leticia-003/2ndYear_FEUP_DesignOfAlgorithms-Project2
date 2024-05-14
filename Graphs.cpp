@@ -372,6 +372,66 @@ void Graph::printGraph(const Graph& graph) {
     }
 }
 
+Edge* Graph::findEdge(unsigned first, unsigned second) {
+    // Get the adjacency list for the vertex with id 'first'
+    for (auto edge : vertexSet[first]->getAdj()) {
+        // Check if the edge connects 'first' to 'second'
+        if (edge->getOrig()->getId() == second || edge->getDest()->getId() == second) {
+            return edge;
+        }
+    }
+    return nullptr;
+}
+
+double Graph::tSP2OptImprovement(std::vector<int>& path) {
+    double currDistance = 0;
+    for (int i = 0; i < path.size() - 1; i++)
+        currDistance += findEdge(path[i], path[i + 1])->getDistance();
+
+    double bestDistance = currDistance;
+
+    bool found = true;
+    while (found) {
+        found = false;
+
+        for (int i = 1; i < path.size() - 2; i++) {
+            for (int j = i + 1; j < path.size() - 1; j++) {
+
+                std::vector<int> newPath = path;
+
+                currDistance -= findEdge(newPath[i - 1], newPath[i])->getDistance();
+                currDistance -= findEdge(newPath[j], newPath[j + 1])->getDistance();
+
+                if (j != i + 1) { // Non-consecutive nodes
+                    currDistance -= findEdge(newPath[i], newPath[i + 1])->getDistance();
+                    currDistance -= findEdge(newPath[j - 1], newPath[j])->getDistance();
+                }
+
+                std::swap(newPath[i], newPath[j]);
+
+                currDistance += findEdge(newPath[i - 1], newPath[i])->getDistance();
+                currDistance += findEdge(newPath[j], newPath[j + 1])->getDistance();
+
+                if (j != i + 1) { // Non-consecutive nodes
+                    currDistance += findEdge(newPath[i], newPath[i + 1])->getDistance();
+                    currDistance += findEdge(newPath[j - 1], newPath[j])->getDistance();
+                }
+
+                if (currDistance < bestDistance) {
+                    path = newPath;
+                    bestDistance = currDistance;
+                    found = true;
+                    break;
+                }
+                else currDistance = bestDistance;
+            }
+        }
+        if (found) break;
+    }
+    return bestDistance;
+}
+
+
 
 void Graph::dfsTree(unsigned startId, std::vector<unsigned>& tree) const {
     // Clear the previous content of the tree vector

@@ -7,6 +7,7 @@
 #include <vector>
 #include <limits>
 #include <iomanip>
+using namespace std;
 
 void Algorithms::backtrackingAlgorithm(const Graph& graph, const std::string& graphFile) {
     std::vector<unsigned> path, bestPath;
@@ -177,7 +178,7 @@ void Algorithms::dfsTraversal(int u, int parent, const std::vector<std::vector<i
 std::pair<double, std::vector<int>> Algorithms::nearestNeighbor(const Graph& graph, int startNode) {
     std::vector<int> tour;
     double totalDistance = 0.0;
-    int numNodes = graph.getVertices().size(); // Implement numNodes() method in your Graph class
+    int numNodes = graph.getVertices().size();
 
     std::vector<bool> visited(numNodes, false);
     int current = startNode;
@@ -189,7 +190,7 @@ std::pair<double, std::vector<int>> Algorithms::nearestNeighbor(const Graph& gra
         double minDistance = std::numeric_limits<double>::max();
         for (int j = 0; j < numNodes; ++j) {
             if (!visited[j]) {
-                double distance = graph.getDistance(current, j); // Implement getDistance() method in your Graph class
+                double distance = graph.getDistance(current, j);
                 if (distance < minDistance) {
                     minDistance = distance;
                     nearestNeighbor = j;
@@ -203,8 +204,103 @@ std::pair<double, std::vector<int>> Algorithms::nearestNeighbor(const Graph& gra
     }
 
     // Return to the starting node
-    totalDistance += graph.getDistance(current, startNode); // Implement getDistance() method
+    totalDistance += graph.getDistance(current, startNode);
     tour.push_back(startNode);
 
-    return make_pair(totalDistance, tour);
+    return std::make_pair(totalDistance, tour);
+}
+
+std::pair<double, std::vector<int>> Algorithms::twoOpt(const Graph& graph, const std::vector<int>& initialTour) {
+    int n = initialTour.size();
+    std::vector<int> tour = initialTour;
+    double tourLength = 0.0;
+
+    // Compute initial tour length
+    for (int i = 0; i < n - 1; ++i) {
+        tourLength += graph.getDistance(tour[i], tour[i + 1]);
+    }
+    tourLength += graph.getDistance(tour[n - 1], tour[0]); // Return to starting node
+
+    bool improved = true;
+    while (improved) {
+        improved = false;
+        for (int i = 0; i < n - 1; ++i) {
+            for (int j = i + 1; j < n; ++j) {
+                // Create a new tour by reversing the segment between i+1 and j
+                std::vector<int> newTour = tour;
+                std::reverse(newTour.begin() + i + 1, newTour.begin() + j + 1);
+
+                // Compute new tour length
+                double newTourLength = 0.0;
+                for (int k = 0; k < n - 1; ++k) {
+                    newTourLength += graph.getDistance(newTour[k], newTour[k + 1]);
+                }
+                newTourLength += graph.getDistance(newTour[n - 1], newTour[0]); // Return to starting node
+
+                // If the new tour is shorter, update tour and tour length
+                if (newTourLength < tourLength) {
+                    tour = newTour;
+                    tourLength = newTourLength;
+                    improved = true;
+                    break; // Break out of the inner loop to start the next iteration of the outer loop
+                }
+            }
+            if (improved) {
+                break; // Break out of the outer loop to restart the while loop
+            }
+        }
+    }
+
+    return std::make_pair(tourLength, tour);
+}
+
+
+
+std::pair<double, std::vector<int>> Algorithms::simulatedAnnealing(const Graph& graph, const std::vector<int>& initialTour) {
+    std::vector<int> tour = initialTour;
+    double tourLength = 0.0;
+    int n = tour.size();
+
+    // Compute initial tour length
+    for (int i = 0; i < n - 1; ++i) {
+        tourLength += graph.getDistance(tour[i], tour[i + 1]);
+    }
+    tourLength += graph.getDistance(tour[n - 1], tour[0]); // Return to starting node
+
+    double temperature = 10000;
+    double coolingRate = 0.999;
+
+    while (temperature > 1) {
+        // Create a new tour by swapping two cities
+        std::vector<int> newTour = tour;
+        int i = rand() % (n - 1) + 1;
+        int j = rand() % (n - 1) + 1;
+        std::swap(newTour[i], newTour[j]);
+
+        // Compute new tour length
+        double newTourLength = 0.0;
+        for (int k = 0; k < n - 1; ++k) {
+            newTourLength += graph.getDistance(newTour[k], newTour[k + 1]);
+        }
+        newTourLength += graph.getDistance(newTour[n - 1], newTour[0]); // Return to starting node
+
+        // Decide whether to accept the new tour
+        if (newTourLength < tourLength || exp((tourLength - newTourLength) / temperature) > ((double) rand() / RAND_MAX)) {
+            tour = newTour;
+            tourLength = newTourLength;
+        }
+
+        // Cool down
+        temperature *= coolingRate;
+    }
+
+    return std::make_pair(tourLength, tour);
+}
+
+
+void Algorithms::printTour(const std::vector<int>& tour) const {
+    for (int node : tour) {
+        std::cout << node << " ";
+    }
+    std::cout << std::endl;
 }

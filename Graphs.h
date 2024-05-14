@@ -9,6 +9,8 @@
 #include "VertexEdge.h"
 #include <unordered_map>
 #include <unordered_set>
+using namespace std;
+
 
 class Graph {
 public:
@@ -23,6 +25,8 @@ public:
     void printGraph(const Graph& graph);
 
     Vertex* getVertex(unsigned id) const;
+
+    Edge* findEdge(unsigned first, unsigned second);
 
     double getDistanceOrHaversine(int sourceId, int destId) const;
 
@@ -49,6 +53,8 @@ public:
     Graph createExtraFullyConnectedGraph(const std::string& graphFile);
 
     Graph createRealWorldGraphs(const std::string& graphFile);
+
+    double tSP2OptImprovement(std::vector<int>& path);
 
     unsigned size() const;
 

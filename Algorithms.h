@@ -7,7 +7,7 @@
 #include <iostream>
 #include <vector>
 #include "VertexEdge.h"
-
+using namespace std;
 
 class Algorithms {
 public:
@@ -23,6 +23,14 @@ public:
                                   std::vector<bool>& visited, std::vector<int>& tspPath) const;
 
     std::pair<double, std::vector<int>> nearestNeighbor(const Graph& graph, int startNode);
+
+    std::pair<double, std::vector<int>> twoOpt(const Graph& graph, const std::vector<int>& initialTour);
+
+    double tSP2OptImprovement(vector<unsigned int>& path);
+
+    std::pair<double, std::vector<int>> simulatedAnnealing(const Graph& graph, const std::vector<int>& initialTour);
+
+    void printTour(const std::vector<int>& tour) const;
 
 private:
     const Graph* graph;
