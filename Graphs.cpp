@@ -296,9 +296,9 @@ Graph Graph::createRealWorldGraphs(const std::string& graphFile) {
 }
 
 
-void Graph::printGraph(const Graph* graph) {
+void Graph::printGraph(const Graph& graph) {
     std::cout << "Graph:" << std::endl;
-    for (const auto& vertex : graph->getVertices()) {
+    for (const auto& vertex : graph.getVertices()) {
         std::cout << "Vertex " << vertex->getId() << ": ";
         for (const auto& edge : vertex->getAdj()) {
             std::cout << edge->getDest()->getId() << " ";

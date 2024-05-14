@@ -3,7 +3,7 @@
 #include "Algorithms.h"
 #include <iostream>
 #include <filesystem>
-#include <math.h>
+#include <cmath>
 
 void displayMenu() {
     std::cout << "+-------------------------------------+" << std::endl;
@@ -211,7 +211,7 @@ std::string getDatasetChoice() {
         switch (actionChoice) {
             case 1:
                 // Print the graph
-                //graphHandler.printGraph(fullyConnectedGraphs);
+                graphHandler.printGraph(fullyConnectedGraphs);
                 break;
             case 2: {
                 auto startTime = std::chrono::high_resolution_clock::now();
@@ -315,7 +315,7 @@ std::string getDatasetChoice() {
         switch (actionChoice) {
             case 1:
                 // Print the graph
-                //graphHandler.printGraph(realWorldGraph);
+                graphHandler.printGraph(realWorldGraph);
                 break;
             case 2: {
                 auto startTime = std::chrono::high_resolution_clock::now();

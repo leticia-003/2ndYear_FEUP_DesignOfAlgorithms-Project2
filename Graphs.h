@@ -20,7 +20,7 @@ public:
 
     bool addVertex(Vertex& vertex);
 
-    void printGraph(const Graph* graph);
+    void printGraph(const Graph& graph);
 
     Vertex* getVertex(unsigned id) const;
 
