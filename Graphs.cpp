@@ -372,7 +372,7 @@ void Graph::printGraph(const Graph& graph) {
     }
 }
 
-Edge* Graph::findEdge(unsigned first, unsigned second) {
+Edge* Graph::findEdge(unsigned first, unsigned second) const{
     // Get the adjacency list for the vertex with id 'first'
     for (auto edge : vertexSet[first]->getAdj()) {
         // Check if the edge connects 'first' to 'second'

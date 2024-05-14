@@ -24,9 +24,7 @@ public:
 
     std::pair<double, std::vector<int>> nearestNeighbor(const Graph& graph, int startNode);
 
-    std::pair<double, std::vector<int>> twoOpt(const Graph& graph, const std::vector<int>& initialTour);
-
-    double tSP2OptImprovement(vector<unsigned int>& path);
+    double tSP2OptImprovement(const Graph& graph, std::vector<int>& path);
 
     std::pair<double, std::vector<int>> simulatedAnnealing(const Graph& graph, const std::vector<int>& initialTour);
 

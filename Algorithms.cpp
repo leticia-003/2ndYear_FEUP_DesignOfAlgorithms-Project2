@@ -210,48 +210,52 @@ std::pair<double, std::vector<int>> Algorithms::nearestNeighbor(const Graph& gra
     return std::make_pair(totalDistance, tour);
 }
 
-std::pair<double, std::vector<int>> Algorithms::twoOpt(const Graph& graph, const std::vector<int>& initialTour) {
-    int n = initialTour.size();
-    std::vector<int> tour = initialTour;
-    double tourLength = 0.0;
+double Algorithms::tSP2OptImprovement(const Graph& graph,std::vector<int>& path) {
+    double currDistance = 0;
+    for (int i = 0; i < path.size() - 1; i++)
+        currDistance += graph.findEdge(path[i], path[i + 1])->getDistance();
 
-    // Compute initial tour length
-    for (int i = 0; i < n - 1; ++i) {
-        tourLength += graph.getDistance(tour[i], tour[i + 1]);
-    }
-    tourLength += graph.getDistance(tour[n - 1], tour[0]); // Return to starting node
+    double bestDistance = currDistance;
 
-    bool improved = true;
-    while (improved) {
-        improved = false;
-        for (int i = 0; i < n - 1; ++i) {
-            for (int j = i + 1; j < n; ++j) {
-                // Create a new tour by reversing the segment between i+1 and j
-                std::vector<int> newTour = tour;
-                std::reverse(newTour.begin() + i + 1, newTour.begin() + j + 1);
+    bool found = true;
+    while (found) {
+        found = false;
 
-                // Compute new tour length
-                double newTourLength = 0.0;
-                for (int k = 0; k < n - 1; ++k) {
-                    newTourLength += graph.getDistance(newTour[k], newTour[k + 1]);
+        for (int i = 1; i < path.size() - 2; i++) {
+            for (int j = i + 1; j < path.size() - 1; j++) {
+
+                std::vector<int> newPath = path;
+
+                currDistance -= graph.findEdge(newPath[i - 1], newPath[i])->getDistance();
+                currDistance -= graph.findEdge(newPath[j], newPath[j + 1])->getDistance();
+
+                if (j != i + 1) { // Non-consecutive nodes
+                    currDistance -= graph.findEdge(newPath[i], newPath[i + 1])->getDistance();
+                    currDistance -= graph.findEdge(newPath[j - 1], newPath[j])->getDistance();
                 }
-                newTourLength += graph.getDistance(newTour[n - 1], newTour[0]); // Return to starting node
 
-                // If the new tour is shorter, update tour and tour length
-                if (newTourLength < tourLength) {
-                    tour = newTour;
-                    tourLength = newTourLength;
-                    improved = true;
-                    break; // Break out of the inner loop to start the next iteration of the outer loop
+                std::swap(newPath[i], newPath[j]);
+
+                currDistance += graph.findEdge(newPath[i - 1], newPath[i])->getDistance();
+                currDistance += graph.findEdge(newPath[j], newPath[j + 1])->getDistance();
+
+                if (j != i + 1) { // Non-consecutive nodes
+                    currDistance += graph.findEdge(newPath[i], newPath[i + 1])->getDistance();
+                    currDistance += graph.findEdge(newPath[j - 1], newPath[j])->getDistance();
                 }
-            }
-            if (improved) {
-                break; // Break out of the outer loop to restart the while loop
+
+                if (currDistance < bestDistance) {
+                    path = newPath;
+                    bestDistance = currDistance;
+                    found = true;
+                    break;
+                }
+                else currDistance = bestDistance;
             }
         }
+        if (found) break;
     }
-
-    return std::make_pair(tourLength, tour);
+    return bestDistance;
 }
 
 

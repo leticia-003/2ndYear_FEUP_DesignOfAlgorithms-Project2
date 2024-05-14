@@ -26,7 +26,7 @@ public:
 
     Vertex* getVertex(unsigned id) const;
 
-    Edge* findEdge(unsigned first, unsigned second);
+    Edge* findEdge(unsigned first, unsigned second) const;
 
     double getDistanceOrHaversine(int sourceId, int destId) const;
 

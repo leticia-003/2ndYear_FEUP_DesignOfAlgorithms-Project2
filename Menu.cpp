@@ -163,7 +163,7 @@ std::string getDatasetChoice() {
                     std::cout << "Improved Tour (Simulated Annealing): ";
                     algo.printTour(improvedTour);*/
 
-                    double resultado = toyGraph.tSP2OptImprovement(nnTour);
+                    double resultado = algo.tSP2OptImprovement(toyGraph, nnTour);
                     cout << resultado;
 
                 }
