@@ -23,7 +23,7 @@ void Algorithms::backtrackingAlgorithm(const Graph& graph, const std::string& gr
     std::string graphName = graphFile.substr(0, graphFile.find_last_of('.'));
     std:: cout << graphName << std::endl;
     std::cout << "Time: ";
-    std::cout << (end - start) / std::chrono::milliseconds(1) << " ms" << std::endl;
+    std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << " ms" << std::endl;
     std::cout << "Minimal Cost: ";
     std::cout << minCost << std::endl;
     std::cout << "Corresponding Path: ";

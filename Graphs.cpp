@@ -352,54 +352,6 @@ Edge* Graph::findEdge(unsigned first, unsigned second) const{
     return nullptr;
 }
 
-double Graph::tSP2OptImprovement(std::vector<int>& path) {
-    double currDistance = 0;
-    for (int i = 0; i < path.size() - 1; i++)
-        currDistance += findEdge(path[i], path[i + 1])->getDistance();
-
-    double bestDistance = currDistance;
-
-    bool found = true;
-    while (found) {
-        found = false;
-
-        for (int i = 1; i < path.size() - 2; i++) {
-            for (int j = i + 1; j < path.size() - 1; j++) {
-
-                std::vector<int> newPath = path;
-
-                currDistance -= findEdge(newPath[i - 1], newPath[i])->getDistance();
-                currDistance -= findEdge(newPath[j], newPath[j + 1])->getDistance();
-
-                if (j != i + 1) { // Non-consecutive nodes
-                    currDistance -= findEdge(newPath[i], newPath[i + 1])->getDistance();
-                    currDistance -= findEdge(newPath[j - 1], newPath[j])->getDistance();
-                }
-
-                std::swap(newPath[i], newPath[j]);
-
-                currDistance += findEdge(newPath[i - 1], newPath[i])->getDistance();
-                currDistance += findEdge(newPath[j], newPath[j + 1])->getDistance();
-
-                if (j != i + 1) { // Non-consecutive nodes
-                    currDistance += findEdge(newPath[i], newPath[i + 1])->getDistance();
-                    currDistance += findEdge(newPath[j - 1], newPath[j])->getDistance();
-                }
-
-                if (currDistance < bestDistance) {
-                    path = newPath;
-                    bestDistance = currDistance;
-                    found = true;
-                    break;
-                }
-                else currDistance = bestDistance;
-            }
-        }
-        if (found) break;
-    }
-    return bestDistance;
-}
-
 void Graph::dfsHelper(unsigned currentId, std::unordered_set<unsigned>& visited, std::vector<unsigned>& tree) const {
     // Mark the current vertex as visited
     visited.insert(currentId);

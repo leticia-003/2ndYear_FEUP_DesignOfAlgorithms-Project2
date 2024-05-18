@@ -127,13 +127,6 @@ public:
     Graph createRealWorldGraphs(const std::string& graphFile);
 
     /**
-     * @brief Improves the TSP path using the 2-opt local search method.
-     * @param path The TSP path to be improved.
-     * @return The improved cost of the TSP path.
-     */
-    double tSP2OptImprovement(std::vector<int>& path);
-
-    /**
      * @brief Gets the size of the graph.
      * @return The number of vertices in the graph.
      */
