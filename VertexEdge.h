@@ -30,10 +30,6 @@ public:
 
     Edge* getEdge(int destId);
 
-    Vertex* getParent() const;
-
-    void setParent(Vertex* p);
-
     double getLatitude() const;
 
     double getLongitude() const;

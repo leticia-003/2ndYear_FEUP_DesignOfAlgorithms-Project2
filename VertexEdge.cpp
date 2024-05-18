@@ -49,14 +49,6 @@ Edge* Vertex::getEdge(int destId) {
     return nullptr; // Edge not found
 }
 
-Vertex* Vertex::getParent() const {
-    return parent;
-}
-
-void Vertex::setParent(Vertex* p) {
-    parent = p;
-}
-
 
 /************************** Edge ***************************/
 

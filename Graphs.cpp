@@ -400,20 +400,6 @@ double Graph::tSP2OptImprovement(std::vector<int>& path) {
     return bestDistance;
 }
 
-
-
-void Graph::dfsTree(unsigned startId, std::vector<unsigned>& tree) const {
-    // Clear the previous content of the tree vector
-    tree.clear();
-
-    // Create a set to keep track of visited vertices
-    std::unordered_set<unsigned> visited;
-
-    // Perform DFS traversal
-    dfsHelper(startId, visited, tree);
-}
-
-
 void Graph::dfsHelper(unsigned currentId, std::unordered_set<unsigned>& visited, std::vector<unsigned>& tree) const {
     // Mark the current vertex as visited
     visited.insert(currentId);

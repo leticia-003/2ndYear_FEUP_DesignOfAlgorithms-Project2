@@ -36,8 +36,6 @@ public:
 
     double haversine(double lat1, double lon1, double lat2, double lon2) const;
 
-    void dfsTree(unsigned startId, std::vector<unsigned>& tree) const;
-
     void dfsHelper(unsigned currentId, std::unordered_set<unsigned>& visited, std::vector<unsigned>& tree) const;
 
     Graph createToyGraphs(const std::string& graphFile);
