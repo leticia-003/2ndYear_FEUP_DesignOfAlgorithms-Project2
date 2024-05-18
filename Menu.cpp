@@ -4,6 +4,8 @@
 #include <iostream>
 #include <filesystem>
 #include <cmath>
+#include <set>
+#include <map>
 
 void displayMenu() {
     std::cout << "+-------------------------------------+" << std::endl;
@@ -81,9 +83,9 @@ std::string getDatasetChoice() {
         std::cout << "+----------------------------------------+" << std::endl;
         std::cout << "|  1. Print the graph                    |" << std::endl;
         std::cout << "|  2. TSP Backtracking                   |" << std::endl;
-        std::cout << "|  3. MST Prim                           |" << std::endl;
-        std::cout << "|  4. Triangular Approximation Heuristic |" << std::endl;
-        std::cout << "|  5. Nearest Neighbor/ 2-OPT Heuristic  |" << std::endl;
+        std::cout << "|  3. Triangular Approximation Heuristic |" << std::endl;
+        std::cout << "|  4. Nearest Neighbor/ 2-OPT Heuristic  |" << std::endl;
+        std::cout << "|  5. MST Prim                           |" << std::endl;
         std::cout << "+----------------------------------------+" << std::endl;
 
         int actionChoice;
@@ -101,23 +103,7 @@ std::string getDatasetChoice() {
                 // Perform TSP backtracking
                 algo.backtrackingAlgorithm(toyGraph, graphFiles[graphChoice - 1]);
                 break;
-            case 3: {
-                auto startTime = std::chrono::high_resolution_clock::now();
-                int startId = 0; // Starting vertex ID is fixed at 0
-
-                // Call mstPrim function
-                std::vector<std::pair<unsigned, unsigned>> mST;
-                double mstCost = toyGraph.mstPrim(startId, mST);
-
-                // Output the cost of the Minimum Spanning Tree
-                std::cout << "The cost of the Minimum Spanning Tree is: " << mstCost << std::endl;
-
-                auto endTime = std::chrono::high_resolution_clock::now();
-                auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
-                std::cout << "Time taken: " << duration << " ms" << std::endl;
-                break;
-            }
-            case 4:
+            case 3:
                 if (graphChoice == 3) {
                     std::cout << "The graph is not fully connected. Unable to apply the Triangular Approximation Heuristic." << std::endl;
                 } else {
@@ -142,7 +128,7 @@ std::string getDatasetChoice() {
                 }
                 break;
 
-            case 5:
+            case 4:
                 if (graphChoice == 3) {
                     std::cout << "The graph is not fully connected. Unable to apply the Triangular Approximation Heuristic." << std::endl;
                 }
@@ -182,6 +168,61 @@ std::string getDatasetChoice() {
                 std::cout << "+----------------------------------------+" << std::endl;
             }
                 break;
+
+            case 5: {
+                auto startTime = std::chrono::high_resolution_clock::now();
+                int startId; // Starting vertex ID is fixed at 0
+                std::cout << "Write a starting point (id): ";
+                std::cin >> startId;
+
+                // Call mstPrim function
+                std::vector<std::pair<unsigned, unsigned>> mST;
+                double mstCost = toyGraph.mstPrim(startId, mST);
+
+                // Output the cost of the Minimum Spanning Tree
+                std::cout << "The cost of the Minimum Spanning Tree is: " << mstCost << std::endl;
+
+                // Output the path of the Minimum Spanning Tree
+                std::cout << "The path of the Minimum Spanning Tree is: ";
+
+                if (!mST.empty()) {
+                    // Create a map to track the adjacency list
+                    std::map<unsigned, std::vector<unsigned>> adjList;
+                    for (const auto& edge : mST) {
+                        adjList[edge.first].push_back(edge.second);
+                        adjList[edge.second].push_back(edge.first);
+                    }
+
+                    // Perform a BFS or DFS to get the path from the start vertex
+                    std::vector<unsigned> path;
+                    std::set<unsigned> visited;
+                    std::function<void(unsigned)> dfs = [&](unsigned node) {
+                        visited.insert(node);
+                        path.push_back(node);
+                        for (unsigned neighbor : adjList[node]) {
+                            if (visited.find(neighbor) == visited.end()) {
+                                dfs(neighbor);
+                            }
+                        }
+                    };
+
+                    dfs(startId);
+
+                    for (size_t i = 0; i < path.size(); ++i) {
+                        std::cout << path[i] << " -> ";
+                    }
+                    std::cout  << startId;
+                } else {
+                    std::cout << "No path found.";
+                }
+
+                std::cout << std::endl;
+
+                auto endTime = std::chrono::high_resolution_clock::now();
+                auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
+                std::cout << "Time taken: " << duration << " ms" << std::endl;
+                break;
+            }
 
             default:
                 std::cout << "Invalid choice" << std::endl;

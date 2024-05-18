@@ -113,11 +113,15 @@ double Graph::mstPrim(int startId, std::vector<std::pair<unsigned, unsigned>>& m
     std::unordered_set<unsigned> visited;
     mST.clear();
 
+    // Track the order of vertices added to the MST
+    std::vector<unsigned> pathOrder;
+
     // Push the start vertex and its edges into the priority queue
     for (auto edge : getEdges(startId)) {
         pq.push({edge->getDistance(), {startId, edge->getDest()->getId()}});
     }
     visited.insert(startId);
+    pathOrder.push_back(startId);
 
     double totalCost = 0.0;
     unsigned numVertices = vertexSet.size();
@@ -134,8 +138,8 @@ double Graph::mstPrim(int startId, std::vector<std::pair<unsigned, unsigned>>& m
 
         mST.push_back({src, dest});
         totalCost += cost;
-
         visited.insert(dest);
+        pathOrder.push_back(dest);
 
         // Add adjacent edges of the destination vertex to the priority queue
         for (auto adjEdge : getEdges(dest)) {
@@ -144,21 +148,35 @@ double Graph::mstPrim(int startId, std::vector<std::pair<unsigned, unsigned>>& m
                 pq.push({adjEdge->getDistance(), {dest, adjDest}});
             }
         }
+    }
 
-        // Also consider all non-adjacent vertices for potential edges
-        for (auto vertex : vertexSet) {
-            unsigned vertexId = vertex->getId();
-            if (visited.find(vertexId) == visited.end()) {
-                double dist = getDistanceOrHaversine(dest, vertexId);
-                if (dist != INF) {
-                    pq.push({dist, {dest, vertexId}});
-                }
-            }
+    // Check if we have visited all vertices
+    if (visited.size() != numVertices) {
+        std::cout << "No path exists that visits all nodes and returns to the origin." << std::endl;
+        return -1; // Indicate failure
+    }
+
+    // To make it a cycle, add the edge from the last vertex back to the start vertex
+    unsigned lastVertex = pathOrder.back();
+    bool cycleCompleted = false;
+    for (auto edge : getEdges(lastVertex)) {
+        if (edge->getDest()->getId() == startId) {
+            totalCost += edge->getDistance();
+            mST.push_back({lastVertex, startId});
+            pathOrder.push_back(startId);
+            cycleCompleted = true;
+            break;
         }
+    }
+
+    if (!cycleCompleted) {
+        std::cout << "No path exists that returns to the origin." << std::endl;
+        return -1; // Indicate failure
     }
 
     return totalCost;
 }
+
 
 
 
