@@ -12,6 +12,7 @@ using namespace std;
 class Algorithms {
 public:
     Algorithms(const Graph* g) : graph(g) {}
+
     void backtrackingAlgorithm(const Graph& graph, const std::string& graphFile) const;
 
     static double getDistance(const Graph& graph, int sourceId, int destId);

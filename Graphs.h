@@ -24,21 +24,13 @@ public:
 
     void printGraph(const Graph& graph);
 
-    Vertex* getVertex(unsigned id) const;
-
     Edge* findEdge(unsigned first, unsigned second) const;
-
-    double getDistanceOrHaversine(int sourceId, int destId) const;
 
     std::vector<Edge*> getEdges(int sourceId) const;
 
     bool parseNodesFile(const std::string& graphDirectory, Graph& graph);
 
     double mstPrim(int startId, std::vector<std::pair<unsigned, unsigned>>& mST) const;
-
-    Edge* getEdge(int sourceId, int destId) const;
-
-    bool isComplete() const;
 
     double getDistance(int sourceId, int destId) const;
 

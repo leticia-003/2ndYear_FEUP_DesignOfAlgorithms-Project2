@@ -47,24 +47,6 @@ std::vector<Edge*> Graph::getEdges(int sourceId) const {
     return sourceVertex->getAdj();
 }
 
-double Graph::getDistanceOrHaversine(int sourceId, int destId) const {
-    // First try to get the direct distance
-    double directDistance = getDistance(sourceId, destId);
-    if (directDistance != INF) {
-        return directDistance;
-    }
-
-    // If no direct edge exists, calculate Haversine distance
-    Vertex* sourceVertex = findVertex(sourceId);
-    Vertex* destVertex = findVertex(destId);
-    if (sourceVertex && destVertex) {
-        return haversine(sourceVertex->getLatitude(), sourceVertex->getLongitude(),
-                         destVertex->getLatitude(), destVertex->getLongitude());
-    }
-
-    return INF; // If either vertex is not found, return infinity
-}
-
 bool Graph::parseNodesFile(const std::string& graphDirectory, Graph& graph) {
     std::string filePath = "../Real-world Graphs/" + graphDirectory + "/nodes.csv";
     std::ifstream infile(filePath);
@@ -178,28 +160,6 @@ double Graph::mstPrim(int startId, std::vector<std::pair<unsigned, unsigned>>& m
 }
 
 
-
-
-Edge* Graph::getEdge(int sourceId, int destId) const {
-    // First, find the source vertex
-    Vertex* sourceVertex = findVertex(sourceId);
-    if (!sourceVertex) {
-        std::cerr << "Source vertex with ID " << sourceId << " not found." << std::endl;
-        return nullptr;
-    }
-
-    // Now, find the edge with the destination vertex ID
-    for (Edge* edge : sourceVertex->getAdj()) {
-        if (edge->getDest()->getId() == destId) {
-            return edge;
-        }
-    }
-
-    // If no edge found, print an error message and return nullptr
-    std::cerr << "Edge from vertex " << sourceId << " to vertex " << destId << " not found." << std::endl;
-    return nullptr;
-}
-
 double Graph::getDistance(int sourceId, int destId) const {
     Vertex* sourceVertex = findVertex(sourceId);
     Vertex* destVertex = findVertex(destId);
@@ -210,15 +170,6 @@ double Graph::getDistance(int sourceId, int destId) const {
         }
     }
     return INF; // If there's no edge, return infinity or some large value
-}
-
-Vertex* Graph::getVertex(unsigned id) const {
-    for (auto vertex : vertexSet) {
-        if (vertex->getId() == id) {
-            return vertex;
-        }
-    }
-    return nullptr;
 }
 
 
