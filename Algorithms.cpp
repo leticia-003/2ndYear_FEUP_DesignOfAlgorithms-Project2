@@ -7,6 +7,9 @@
 #include <vector>
 #include <limits>
 #include <iomanip>
+#include <chrono>
+#include <functional>
+
 using namespace std;
 
 void Algorithms::backtrackingAlgorithm(const Graph& graph, const std::string& graphFile) const {

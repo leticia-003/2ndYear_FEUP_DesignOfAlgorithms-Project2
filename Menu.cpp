@@ -6,6 +6,10 @@
 #include <cmath>
 #include <set>
 #include <map>
+#include <chrono>
+#include <functional>
+
+namespace fs = std::filesystem;
 
 void displayMenu() {
     std::cout << "+-------------------------------------+" << std::endl;
@@ -60,8 +64,8 @@ std::string getDatasetChoice() {
 
 
         int fileNum = 1;
-        for (const auto& entry : std::__fs::filesystem::directory_iterator("../Toy-Graphs")) {
-            std::string filename = entry.path().filename();
+        for (const auto& entry : fs::directory_iterator("../Toy-Graphs")) {
+            std::string filename = entry.path().filename().string();  // Correct conversion to string
             graphFiles.push_back(filename);
             ++fileNum;
         }
