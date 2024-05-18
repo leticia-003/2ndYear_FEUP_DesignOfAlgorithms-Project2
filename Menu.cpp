@@ -419,8 +419,13 @@ std::string getDatasetChoice() {
                     std::vector<std::pair<unsigned, unsigned>> mST;
                     double mstCost = fullyConnectedGraphs.mstPrim(startId, mST);
 
-                    // Output the cost of the Minimum Spanning Tree
-                    std::cout << "The cost of the Minimum Spanning Tree is: " << mstCost << std::endl;
+                    if (mstCost > 1000000) {
+                        double arredondado =
+                                round(mstCost / 1000000.0 * 100.0) / 100.0; // Arredonda para duas casas decimais
+                        std::cout << "The cost of the Minimum Spanning Tree is: " << arredondado << " M" << std::endl;
+                    } else {
+                        std::cout << "The cost of the Minimum Spanning Tree is: " << mstCost << std::endl;
+                    }
 
                     // Output the path of the Minimum Spanning Tree
                     std::cout << "The path of the Minimum Spanning Tree is: ";
@@ -636,8 +641,13 @@ std::string getDatasetChoice() {
                     std::vector<std::pair<unsigned, unsigned>> mST;
                     double mstCost = realWorldGraph.mstPrim(startId, mST);
 
-                    // Output the cost of the Minimum Spanning Tree
-                    std::cout << "The cost of the Minimum Spanning Tree is: " << mstCost << std::endl;
+                    if (mstCost > 1000000) {
+                        double arredondado =
+                                round(mstCost / 1000000.0 * 100.0) / 100.0; // Arredonda para duas casas decimais
+                        std::cout << "The cost of the Minimum Spanning Tree is: " << arredondado << " M" << std::endl;
+                    } else {
+                        std::cout << "The cost of the Minimum Spanning Tree is: " << mstCost << std::endl;
+                    }
 
                     // Output the path of the Minimum Spanning Tree
                     std::cout << "The path of the Minimum Spanning Tree is: ";
