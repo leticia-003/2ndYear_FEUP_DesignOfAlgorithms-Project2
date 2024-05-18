@@ -32,7 +32,6 @@ public:
     /**
      * @brief Gets the adjacency list of the vertex.
      * @return A vector of pointers to the edges.
-     * @complexity O(1)
      */
     std::vector<Edge *> getAdj() const;
 
@@ -41,14 +40,12 @@ public:
      * @param dest The destination vertex of the edge.
      * @param distance The distance of the edge.
      * @return Pointer to the added edge.
-     * @complexity O(1)
      */
     Edge * addEdge(Vertex* dest, double distance);
 
     /**
      * @brief Gets the ID of the vertex.
      * @return The ID of the vertex.
-     * @complexity O(1)
      */
     int getId() const;
 
@@ -56,35 +53,30 @@ public:
      * @brief Gets an edge to a specific destination vertex.
      * @param destId The ID of the destination vertex.
      * @return Pointer to the edge if found, nullptr otherwise.
-     * @complexity O(n), where n is the number of edges in the adjacency list.
      */
     Edge* getEdge(int destId);
 
     /**
      * @brief Gets the latitude of the vertex.
      * @return The latitude of the vertex.
-     * @complexity O(1)
      */
     double getLatitude() const;
 
     /**
      * @brief Gets the longitude of the vertex.
      * @return The longitude of the vertex.
-     * @complexity O(1)
      */
     double getLongitude() const;
 
     /**
      * @brief Sets the latitude of the vertex.
      * @param lat The latitude to set.
-     * @complexity O(1)
      */
     void setLatitude(double lat);
 
     /**
      * @brief Sets the longitude of the vertex.
      * @param lon The longitude to set.
-     * @complexity O(1)
      */
     void setLongitude(double lon);
 
@@ -119,21 +111,18 @@ public:
     /**
      * @brief Gets the destination vertex of the edge.
      * @return Pointer to the destination vertex.
-     * @complexity O(1)
      */
     Vertex *getDest() const;
 
     /**
      * @brief Gets the origin vertex of the edge.
      * @return Pointer to the origin vertex.
-     * @complexity O(1)
      */
     Vertex * getOrig() const;
 
     /**
      * @brief Gets the distance of the edge.
      * @return The distance of the edge.
-     * @complexity O(1)
      */
     double getDistance() const;
 
