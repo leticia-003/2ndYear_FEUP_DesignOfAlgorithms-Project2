@@ -533,7 +533,7 @@ std::string getDatasetChoice() {
             std::cout << "+----------------------------------------+" << std::endl;
 
             int actionChoice;
-            std::cout << "Enter your choice (1, 2, 3 or 4): ";
+            std::cout << "Enter your choice (1, 2, 3, 4 ,5 or 6): ";
             std::cin >> actionChoice;
 
             switch (actionChoice) {
